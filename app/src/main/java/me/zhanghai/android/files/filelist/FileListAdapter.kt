@@ -258,7 +258,7 @@ class FileListAdapter(
             isVisible = viewType == FileViewType.LIST
             setImageResource(iconRes)
         }
-        holder.directoryThumbnailImage?.isVisible = isDirectory
+        holder.directoryThumbnailImage?.isVisible = isDirectory && viewType == FileViewType.LIST
         holder.thumbnailOutlineView?.isVisible = !isDirectory
         val supportsThumbnail = file.supportsThumbnail
         val shouldLoadThumbnailIcon = supportsThumbnail && holder.thumbnailIconImage != null &&
