@@ -255,10 +255,10 @@ class FileListAdapter(
         holder.iconLayout.setOnClickListener { selectFile(file) }
         val iconRes = file.mimeType.iconRes
         holder.iconImage.apply {
-            isVisible = viewType == FileViewType.LIST
+            isVisible = !(isDirectory && viewType == FileViewType.GRID)
             setImageResource(iconRes)
         }
-        holder.directoryThumbnailImage?.isVisible = isDirectory && viewType == FileViewType.LIST
+        holder.directoryThumbnailImage?.isVisible = isDirectory
         holder.thumbnailOutlineView?.isVisible = !isDirectory
         val supportsThumbnail = file.supportsThumbnail
         val shouldLoadThumbnailIcon = supportsThumbnail && holder.thumbnailIconImage != null &&
