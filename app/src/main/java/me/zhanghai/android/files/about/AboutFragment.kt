@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import me.zhanghai.android.files.databinding.AboutFragmentBinding
-import me.zhanghai.android.files.ui.LicensesDialogFragment
 import me.zhanghai.android.files.util.createViewIntent
 import me.zhanghai.android.files.util.startActivitySafe
 
@@ -36,7 +35,6 @@ class AboutFragment : Fragment() {
         val activity = requireActivity() as AppCompatActivity
         activity.setSupportActionBar(binding.toolbar)
         activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        binding.licensesLayout.setOnClickListener { LicensesDialogFragment.show(this) }
 //#ifdef NONFREE
         binding.privacyPolicyLayout.isVisible = true
         binding.privacyPolicyLayout.setOnClickListener {
