@@ -231,6 +231,12 @@ class FileListAdapter(
                 isSelected = nameEllipsize == TextUtils.TruncateAt.MARQUEE
             }
         }
+        // 小图标网格（6 列）每格宽度很窄，隐藏底部图标行与菜单按钮，
+        // 让文件名独占整行显示，避免被挤压到 0 宽度导致文字全部丢失。
+        val isGridSmall = viewType == FileViewType.GRID &&
+            Settings.FILE_LIST_GRID_ICON_SIZE.valueCompat == GridIconSize.SMALL
+        holder.iconLayout.isVisible = !isGridSmall
+        holder.menuButton.isVisible = !isGridSmall
         if (payloads.isNotEmpty()) {
             return
         }
