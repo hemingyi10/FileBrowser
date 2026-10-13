@@ -35,6 +35,7 @@ import me.zhanghai.android.files.provider.archive.isArchivePath
 import me.zhanghai.android.files.provider.common.isEncrypted
 import me.zhanghai.android.files.settings.Settings
 import me.zhanghai.android.files.ui.AnimatedListAdapter
+import me.zhanghai.android.files.ui.AspectRatioFrameLayout
 import me.zhanghai.android.files.ui.CheckableForegroundLinearLayout
 import me.zhanghai.android.files.ui.CheckableItemBackground
 import me.zhanghai.android.files.util.isMaterial3Theme
@@ -237,6 +238,11 @@ class FileListAdapter(
             Settings.FILE_LIST_GRID_ICON_SIZE.valueCompat == GridIconSize.SMALL
         holder.iconLayout.isVisible = !isGridSmall
         holder.menuButton.isVisible = !isGridSmall
+        // 小图标模式下把缩略图区从 16:9 改为近方形，图标放大更协调；
+        // 其他档位恢复默认比例。
+        (holder.thumbnailImage.parent as? AspectRatioFrameLayout)?.let {
+            it.ratio = if (isGridSmall) 1.0f else 1.78f
+        }
         if (payloads.isNotEmpty()) {
             return
         }
