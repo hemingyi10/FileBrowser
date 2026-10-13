@@ -14,6 +14,7 @@ import me.zhanghai.android.files.app.application
 import me.zhanghai.android.files.compat.EnvironmentCompat2
 import me.zhanghai.android.files.filelist.FileSortOptions
 import me.zhanghai.android.files.filelist.FileViewType
+import me.zhanghai.android.files.filelist.GridIconSize
 import me.zhanghai.android.files.filelist.OpenApkDefaultAction
 import me.zhanghai.android.files.navigation.BookmarkDirectory
 import me.zhanghai.android.files.navigation.StandardDirectorySettings
@@ -55,6 +56,13 @@ object Settings {
         EnumSettingLiveData(
             R.string.pref_key_file_list_view_type, R.string.pref_default_value_file_list_view_type,
             FileViewType::class.java
+        )
+
+    val FILE_LIST_GRID_ICON_SIZE: SettingLiveData<GridIconSize> =
+        EnumSettingLiveData(
+            R.string.pref_key_file_list_grid_icon_size,
+            R.string.pref_default_value_file_list_grid_icon_size,
+            GridIconSize::class.java
         )
 
     val FILE_LIST_SORT_OPTIONS: SettingLiveData<FileSortOptions> =

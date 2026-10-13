@@ -19,6 +19,71 @@
         android:fitsSystemWindows="true"
         android:theme="?actionBarTheme">
 
+        <LinearLayout
+            android:id="@+id/bottomActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/file_list_toolbar_padding_start"
+            android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow">
+
+            <ImageButton
+                android:id="@+id/bottomActionNewFolder"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/file_list_action_create_directory"
+                android:scaleType="centerInside"
+                android:src="@drawable/add_icon_white_24dp"
+                android:tint="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/bottomActionCopy"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/copy"
+                android:scaleType="centerInside"
+                android:src="@drawable/copy_icon_control_normal_24dp"
+                android:tint="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/bottomActionRefresh"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/refresh"
+                android:scaleType="centerInside"
+                android:src="@drawable/reset_icon_white_24dp"
+                android:tint="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/bottomActionPaste"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/paste"
+                android:scaleType="centerInside"
+                android:src="@drawable/paste_icon_control_normal_24dp"
+                android:tint="#FFFFFF" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/bottomActionMore"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/file_list_action_more"
+                android:scaleType="centerInside"
+                android:src="@drawable/more_vertical_icon_white_24dp"
+                android:tint="#FFFFFF" />
+        </LinearLayout>
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/bottomToolbar"
             android:layout_width="match_parent"

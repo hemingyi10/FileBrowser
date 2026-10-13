@@ -27,6 +27,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContract
@@ -348,6 +349,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             binding.breadcrumbLayout.setData(it)
         }
         viewModel.viewTypeLiveData.observe(viewLifecycleOwner) { onViewTypeChanged(it) }
+        Settings.FILE_LIST_GRID_ICON_SIZE.observe(viewLifecycleOwner) { updateSpanCount() }
         // Live data only calls observeForever() on its sources when it is active, so we have to
         // make view type live data active first (so that it can load its initial value) before we
         // register another observer that needs to get the view type.
@@ -368,6 +370,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         Settings.FILE_LIST_SHOW_HIDDEN_FILES.observe(viewLifecycleOwner) {
             onShowHiddenFilesChanged(it)
         }
+        initBottomActionBar()
     }
 
     override fun onResume() {
@@ -663,7 +666,11 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
                     persistentDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                     widthDp -= getDimensionDp(R.dimen.navigation_max_width).roundToInt()
                 }
-                (widthDp / 180).coerceAtLeast(2)
+                when (Settings.FILE_LIST_GRID_ICON_SIZE.valueCompat) {
+                    GridIconSize.SMALL -> (widthDp / 100).coerceAtLeast(2)
+                    GridIconSize.MEDIUM -> (widthDp / 140).coerceAtLeast(2)
+                    GridIconSize.LARGE -> (widthDp / 180).coerceAtLeast(2)
+                }
             }
         }
     }
@@ -720,6 +727,85 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
 
     private fun refresh() {
         viewModel.reload()
+    }
+
+    private fun initBottomActionBar() {
+        val actionBar = binding.bottomActionBar
+        actionBar.findViewById<View>(R.id.bottomActionNewFolder).setOnClickListener {
+            showCreateDirectoryDialog()
+        }
+        actionBar.findViewById<View>(R.id.bottomActionCopy).setOnClickListener {
+            if (viewModel.selectedFiles.isEmpty()) {
+                showToast(getString(R.string.file_list_action_copy_no_selection))
+            } else {
+                copyFiles(viewModel.selectedFiles)
+            }
+        }
+        actionBar.findViewById<View>(R.id.bottomActionRefresh).setOnClickListener {
+            refresh()
+        }
+        actionBar.findViewById<View>(R.id.bottomActionPaste).setOnClickListener {
+            if (viewModel.pasteState.files.isEmpty()) {
+                showToast(getString(R.string.file_list_action_paste_no_selection))
+            } else {
+                pasteFiles(viewModel.currentPath)
+            }
+        }
+        actionBar.findViewById<View>(R.id.bottomActionMore).setOnClickListener {
+            showBottomMoreMenu(it)
+        }
+    }
+
+    private fun showBottomMoreMenu(anchor: View) {
+        val popupMenu = PopupMenu(requireContext(), anchor)
+        popupMenu.menuInflater.inflate(R.menu.file_list_bottom_more, popupMenu.menu)
+        when (Settings.FILE_LIST_GRID_ICON_SIZE.valueCompat) {
+            GridIconSize.SMALL -> {
+                popupMenu.menu.findItem(R.id.action_grid_icon_small).isChecked = true
+            }
+            GridIconSize.MEDIUM -> {
+                popupMenu.menu.findItem(R.id.action_grid_icon_medium).isChecked = true
+            }
+            GridIconSize.LARGE -> {
+                popupMenu.menu.findItem(R.id.action_grid_icon_large).isChecked = true
+            }
+        }
+        popupMenu.menu.findItem(R.id.action_show_hidden_files).isChecked =
+            Settings.FILE_LIST_SHOW_HIDDEN_FILES.valueCompat
+        popupMenu.setOnMenuItemClickListener { item -> onBottomMoreMenuItemClicked(item) }
+        popupMenu.show()
+    }
+
+    private fun onBottomMoreMenuItemClicked(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_grid_icon_small -> {
+            Settings.FILE_LIST_GRID_ICON_SIZE.putValue(GridIconSize.SMALL)
+            true
+        }
+        R.id.action_grid_icon_medium -> {
+            Settings.FILE_LIST_GRID_ICON_SIZE.putValue(GridIconSize.MEDIUM)
+            true
+        }
+        R.id.action_grid_icon_large -> {
+            Settings.FILE_LIST_GRID_ICON_SIZE.putValue(GridIconSize.LARGE)
+            true
+        }
+        R.id.action_create_directory -> {
+            showCreateDirectoryDialog()
+            true
+        }
+        R.id.action_select_all -> {
+            selectAllFiles()
+            true
+        }
+        R.id.action_show_hidden_files -> {
+            setShowHiddenFiles(!Settings.FILE_LIST_SHOW_HIDDEN_FILES.valueCompat)
+            true
+        }
+        R.id.action_refresh -> {
+            refresh()
+            true
+        }
+        else -> false
     }
 
     private fun setShowHiddenFiles(showHiddenFiles: Boolean) {
@@ -1669,6 +1755,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         val swipeRefreshLayout: SwipeRefreshLayout,
         val recyclerView: RecyclerView,
         val bottomBarLayout: ViewGroup,
+        val bottomActionBar: ViewGroup,
         val bottomToolbar: Toolbar,
         val bottomCreateFileNameEdit: EditText,
         val speedDialView: SpeedDialView
@@ -1693,8 +1780,9 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
                     appBarBinding.breadcrumbLayout, contentBinding.contentLayout,
                     contentBinding.progress, contentBinding.errorText, contentBinding.emptyView,
                     contentBinding.swipeRefreshLayout, contentBinding.recyclerView,
-                    bottomBarBinding.bottomBarLayout, bottomBarBinding.bottomToolbar,
-                    bottomBarBinding.bottomCreateFileNameEdit, speedDialBinding.speedDialView
+                    bottomBarBinding.bottomBarLayout, bottomBarBinding.bottomActionBar,
+                    bottomBarBinding.bottomToolbar, bottomBarBinding.bottomCreateFileNameEdit,
+                    speedDialBinding.speedDialView
                 )
             }
         }

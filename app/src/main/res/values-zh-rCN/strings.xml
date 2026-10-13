@@ -256,6 +256,12 @@
     <string name="file_list_action_view_sort">视图和排序</string>
     <string name="file_list_action_view_list">列表</string>
     <string name="file_list_action_view_grid">网格</string>
+    <string name="file_list_action_grid_icon_small">小图标</string>
+    <string name="file_list_action_grid_icon_medium">中图标</string>
+    <string name="file_list_action_grid_icon_large">大图标</string>
+    <string name="file_list_action_more">更多</string>
+    <string name="file_list_action_copy_no_selection">未选择要复制的文件</string>
+    <string name="file_list_action_paste_no_selection">剪贴板为空</string>
     <string name="file_list_action_sort_by_name">名称</string>
     <string name="file_list_action_sort_by_type">类型</string>
     <string name="file_list_action_sort_by_size">大小</string>
