@@ -88,6 +88,7 @@
             android:id="@+id/bottomToolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
+            android:visibility="gone"
             android:paddingStart="@dimen/file_list_toolbar_padding_start"
             android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow"
             app:navigationIcon="@drawable/close_icon_control_normal_24dp"

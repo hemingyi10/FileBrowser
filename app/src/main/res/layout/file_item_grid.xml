@@ -119,7 +119,7 @@
             android:duplicateParentState="true"
             android:ellipsize="end"
             android:gravity="center"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textAppearance="?textAppearanceListItemSecondary" />
 
         <!--

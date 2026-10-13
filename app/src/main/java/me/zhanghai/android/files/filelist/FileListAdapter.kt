@@ -255,7 +255,7 @@ class FileListAdapter(
         holder.iconLayout.setOnClickListener { selectFile(file) }
         val iconRes = file.mimeType.iconRes
         holder.iconImage.apply {
-            isVisible = true
+            isVisible = !(isDirectory && viewType == FileViewType.GRID)
             setImageResource(iconRes)
         }
         holder.directoryThumbnailImage?.isVisible = isDirectory

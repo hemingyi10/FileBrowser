@@ -371,6 +371,8 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             onShowHiddenFilesChanged(it)
         }
         initBottomActionBar()
+        binding.bottomToolbar.isVisible = false
+        binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
     }
 
     override fun onResume() {
@@ -667,7 +669,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
                     widthDp -= getDimensionDp(R.dimen.navigation_max_width).roundToInt()
                 }
                 when (Settings.FILE_LIST_GRID_ICON_SIZE.valueCompat) {
-                    GridIconSize.SMALL -> (widthDp / 100).coerceAtLeast(2)
+                    GridIconSize.SMALL -> (widthDp / 100).coerceIn(2, 6)
                     GridIconSize.MEDIUM -> (widthDp / 140).coerceAtLeast(2)
                     GridIconSize.LARGE -> (widthDp / 180).coerceAtLeast(2)
                 }
@@ -1116,6 +1118,9 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
 
     private fun updateBottomToolbar() {
         val pickOptions = viewModel.pickOptions
+        val shouldShowToolbar = pickOptions != null || viewModel.pasteState.files.isNotEmpty()
+        binding.bottomActionBar.isVisible = !shouldShowToolbar
+        binding.bottomToolbar.isVisible = shouldShowToolbar
         if (pickOptions != null) {
             bottomActionMode.setMenuResource(R.menu.file_list_pick_bottom)
             val menu = bottomActionMode.menu
@@ -1248,6 +1253,9 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         if (pickOptions == null) {
             viewModel.clearPasteState()
         }
+        binding.bottomActionBar.isVisible = true
+        binding.bottomToolbar.isVisible = false
+        binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
     }
 
     private fun pasteFiles(targetDirectory: Path) {
