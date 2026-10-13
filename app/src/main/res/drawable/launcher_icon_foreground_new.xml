@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 亮黄色文件夹前景图标（白底由 adaptive icon background 提供） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 文件夹背面标签 -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M22,42 L30,32 L50,32 L56,42 Z" />
+
+    <!-- 文件夹主体 -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M22,42 L86,42 L86,72 A8,8 0 0 1 78,80 L30,80 A8,8 0 0 1 22,72 Z" />
+
+    <!-- 文件夹正面折页阴影，增强立体感 -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M22,70 L86,70 L86,72 A8,8 0 0 1 78,80 L30,80 A8,8 0 0 1 22,72 Z" />
+</vector>

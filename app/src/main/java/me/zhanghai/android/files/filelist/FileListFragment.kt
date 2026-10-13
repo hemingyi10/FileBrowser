@@ -373,6 +373,14 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         initBottomActionBar()
         binding.bottomToolbar.isVisible = false
         binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
+        // 确保底部栏在布局完成后也保持显示
+        binding.persistentBarLayout.post {
+            binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
+        }
+        // 旧版本默认档位为 MEDIUM(1)，统一迁移为 SMALL(0) 以保证网格显示 6 列
+        if (Settings.FILE_LIST_GRID_ICON_SIZE.value == GridIconSize.MEDIUM) {
+            Settings.FILE_LIST_GRID_ICON_SIZE.putValue(GridIconSize.SMALL)
+        }
     }
 
     override fun onResume() {
@@ -669,7 +677,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
                     widthDp -= getDimensionDp(R.dimen.navigation_max_width).roundToInt()
                 }
                 when (Settings.FILE_LIST_GRID_ICON_SIZE.valueCompat) {
-                    GridIconSize.SMALL -> (widthDp / 100).coerceIn(2, 6)
+                    GridIconSize.SMALL -> 6
                     GridIconSize.MEDIUM -> (widthDp / 140).coerceAtLeast(2)
                     GridIconSize.LARGE -> (widthDp / 180).coerceAtLeast(2)
                 }
