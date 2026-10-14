@@ -196,7 +196,9 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setHasOptionsMenu(true)
+        if (!args.embedded) {
+            setHasOptionsMenu(true)
+        }
     }
 
     override fun onCreateView(
@@ -220,8 +222,16 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         }
         navigationFragment.listener = this
         val activity = requireActivity() as AppCompatActivity
-        activity.setTitle(R.string.file_list_title)
-        activity.setSupportActionBar(binding.toolbar)
+        if (!args.embedded) {
+            activity.setTitle(R.string.file_list_title)
+            activity.setSupportActionBar(binding.toolbar)
+        }
+        if (args.embedded) {
+            binding.appBarLayout.isVisible = false
+            binding.speedDialView.isVisible = false
+            binding.bottomBarLayout.isVisible = false
+            binding.drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        }
         overlayActionMode = OverlayToolbarActionMode(binding.overlayToolbar, binding.toolbar)
         bottomActionMode = PersistentBarLayoutToolbarActionMode(
             binding.persistentBarLayout, binding.bottomBarLayout, binding.bottomToolbar
@@ -1764,7 +1774,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     }
 
     @Parcelize
-    class Args(val intent: Intent) : ParcelableArgs
+    class Args(val intent: Intent, val embedded: Boolean = false) : ParcelableArgs
 
     private class Binding private constructor(
         val root: View,

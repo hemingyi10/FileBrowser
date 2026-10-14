@@ -17,10 +17,16 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingBottom="8dp" />
+        android:overScrollMode="never"
+        android:paddingBottom="4dp" />
+
+    <FrameLayout
+        android:id="@+id/fileListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <include layout="@layout/file_list_fragment_bottom_bar_include" />
 </LinearLayout>

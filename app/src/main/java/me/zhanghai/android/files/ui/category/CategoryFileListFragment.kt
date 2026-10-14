@@ -16,8 +16,10 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.dispose
+import coil.load
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -40,6 +42,7 @@ import me.zhanghai.android.files.file.isVideo
 import me.zhanghai.android.files.file.loadFileItem
 import me.zhanghai.android.files.filelist.BottomNavHost
 import me.zhanghai.android.files.filelist.name
+import me.zhanghai.android.files.filelist.supportsThumbnail
 import me.zhanghai.android.files.settings.Settings
 import me.zhanghai.android.files.util.createInstallPackageIntent
 import me.zhanghai.android.files.util.createViewIntent
@@ -51,7 +54,7 @@ enum class Category(
     val filters: List<Int>
 ) {
     DOCUMENTS(
-        R.drawable.document_icon_white_24dp,
+        R.drawable.category_documents_icon,
         R.string.category_documents,
         listOf(
             R.string.category_filter_all,
@@ -63,22 +66,22 @@ enum class Category(
         )
     ),
     IMAGES(
-        R.drawable.image_icon_white_24dp,
+        R.drawable.category_images_icon,
         R.string.category_images,
         listOf(R.string.category_filter_all)
     ),
     VIDEOS(
-        R.drawable.video_icon_white_24dp,
+        R.drawable.category_videos_icon,
         R.string.category_videos,
         listOf(R.string.category_filter_all)
     ),
     AUDIO(
-        R.drawable.audio_icon_white_24dp,
+        R.drawable.category_audio_icon,
         R.string.category_audio,
         listOf(R.string.category_filter_all)
     ),
     ARCHIVES(
-        R.drawable.file_archive_icon,
+        R.drawable.category_archives_icon,
         R.string.category_archives,
         listOf(
             R.string.category_filter_all,
@@ -88,7 +91,7 @@ enum class Category(
         )
     ),
     APKS(
-        R.drawable.file_apk_icon,
+        R.drawable.category_apks_icon,
         R.string.category_apks,
         listOf(R.string.category_filter_all)
     );
@@ -194,8 +197,14 @@ class CategoryFileListFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = CategoryFileListAdapter { file -> openFile(file) }
+        val gridLayoutManager = GridLayoutManager(activity, 3).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int =
+                    if (adapter.isHeader(position)) 3 else 1
+            }
+        }
+        binding.recyclerView.layoutManager = gridLayoutManager
         binding.recyclerView.adapter = adapter
         setupFilterBar()
         binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = false
@@ -409,6 +418,8 @@ class CategoryFileListAdapter(
         notifyDataSetChanged()
     }
 
+    fun isHeader(position: Int): Boolean = items[position] is CategoryItem.Header
+
     override fun getItemCount(): Int = items.size
 
     override fun getItemViewType(position: Int): Int =
@@ -421,7 +432,7 @@ class CategoryFileListAdapter(
             )
         } else {
             EntryViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.category_file_item, parent, false)
+                LayoutInflater.from(parent.context).inflate(R.layout.category_file_grid_item, parent, false)
             )
         }
 
@@ -437,12 +448,21 @@ class CategoryFileListAdapter(
     }
 
     private class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val iconImage: ImageView = itemView.findViewById(R.id.iconImage)
+        private val thumbnailImage: ImageView = itemView.findViewById(R.id.thumbnailImage)
         private val nameText: TextView = itemView.findViewById(R.id.nameText)
 
         fun bind(file: FileItem, listener: (FileItem) -> Unit) {
-            iconImage.setImageResource(file.mimeType.iconRes)
             nameText.text = file.name
+            val path = file.path
+            val attributes = file.attributes
+            thumbnailImage.dispose()
+            thumbnailImage.setImageDrawable(null)
+            val isApk = file.mimeType.isApk || file.name.endsWith(".apk", ignoreCase = true)
+            if (isApk || file.supportsThumbnail) {
+                thumbnailImage.load(path to attributes)
+            } else {
+                thumbnailImage.setImageResource(file.mimeType.iconRes)
+            }
             itemView.setOnClickListener { listener(file) }
         }
     }

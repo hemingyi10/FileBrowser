@@ -18,8 +18,13 @@ import androidx.recyclerview.widget.RecyclerView
 import me.zhanghai.android.files.R
 import me.zhanghai.android.files.databinding.HomeFragmentBinding
 import me.zhanghai.android.files.filelist.BottomNavHost
+import me.zhanghai.android.files.filelist.FileListActivity
+import me.zhanghai.android.files.filelist.FileListFragment
+import me.zhanghai.android.files.settings.Settings
 import me.zhanghai.android.files.ui.category.Category
 import me.zhanghai.android.files.ui.category.CategoryFileListFragment
+import me.zhanghai.android.files.util.putArgs
+import me.zhanghai.android.files.util.valueCompat
 
 class HomeFragment : Fragment() {
 
@@ -37,11 +42,25 @@ class HomeFragment : Fragment() {
         val activity = requireActivity() as AppCompatActivity
         activity.setTitle(R.string.home_title)
         activity.setSupportActionBar(binding.toolbar)
+        binding.recyclerView.isNestedScrollingEnabled = false
         binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
         adapter = HomeCategoryAdapter { category -> openCategory(category) }
         binding.recyclerView.adapter = adapter
         binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = false
         setupBottomNavBar()
+        embedInternalStorage()
+    }
+
+    private fun embedInternalStorage() {
+        val intent = FileListActivity.createViewIntent(
+            Settings.FILE_LIST_DEFAULT_DIRECTORY.valueCompat
+        )
+        val fileListFragment = FileListFragment().putArgs(
+            FileListFragment.Args(intent, embedded = true)
+        )
+        childFragmentManager.commit {
+            add(R.id.fileListContainer, fileListFragment)
+        }
     }
 
     private fun setupBottomNavBar() {

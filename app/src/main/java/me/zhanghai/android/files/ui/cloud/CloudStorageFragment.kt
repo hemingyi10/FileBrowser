@@ -16,7 +16,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import me.zhanghai.android.files.R
 import me.zhanghai.android.files.databinding.CloudStorageFragmentBinding
@@ -25,6 +25,8 @@ import me.zhanghai.android.files.filelist.FileListActivity
 import me.zhanghai.android.files.settings.Settings
 import me.zhanghai.android.files.storage.AddLanSmbServerActivity
 import me.zhanghai.android.files.storage.AddStorageDialogActivity
+import me.zhanghai.android.files.storage.FileSystemRoot
+import me.zhanghai.android.files.storage.PrimaryStorageVolume
 import me.zhanghai.android.files.storage.EditFtpServerActivity
 import me.zhanghai.android.files.storage.EditFtpServerFragment
 import me.zhanghai.android.files.storage.EditSftpServerActivity
@@ -53,7 +55,6 @@ class CloudStorageFragment : Fragment() {
         val activity = requireActivity() as AppCompatActivity
         activity.setTitle(R.string.cloud_title)
         activity.setSupportActionBar(binding.toolbar)
-        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = CloudStorageAdapter(
             object : CloudStorageAdapter.Listener {
                 override fun onClickEntry(entry: CloudStorageEntry) {
@@ -67,6 +68,13 @@ class CloudStorageFragment : Fragment() {
                 }
             }
         )
+        val gridLayoutManager = GridLayoutManager(activity, 6).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int =
+                    if (adapter.isSavedItem(position)) 6 else 1
+            }
+        }
+        binding.recyclerView.layoutManager = gridLayoutManager
         binding.recyclerView.adapter = adapter
         binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = false
         setupBottomNavBar()
@@ -87,7 +95,9 @@ class CloudStorageFragment : Fragment() {
 
     private fun refresh() {
         val entries = buildEntries()
-        val saved = Settings.STORAGES.valueCompat.filter { it.path != null }
+        val saved = Settings.STORAGES.valueCompat.filter {
+            it.path != null && it !is FileSystemRoot && it !is PrimaryStorageVolume
+        }
         val items = mutableListOf<CloudItem>()
         items += entries.map { CloudItem.Entry(it) as CloudItem }
         items += saved.map { CloudItem.Saved(it) as CloudItem }
@@ -124,6 +134,12 @@ class CloudStorageFragment : Fragment() {
             getString(R.string.cloud_storage_entry_webdav_desc),
             R.drawable.sd_card_icon_white_24dp,
             { EditWebDavServerActivity::class.createIntent().putArgs(EditWebDavServerFragment.Args()) }
+        ),
+        CloudStorageEntry(
+            getString(R.string.cloud_storage_add),
+            getString(R.string.cloud_storage_add),
+            R.drawable.add_icon_white_24dp,
+            { AddStorageDialogActivity::class.createIntent() }
         )
     )
 }
@@ -156,6 +172,8 @@ class CloudStorageAdapter(
         items.addAll(list)
         notifyDataSetChanged()
     }
+
+    fun isSavedItem(position: Int): Boolean = items[position] is CloudItem.Saved
 
     override fun getItemCount(): Int = items.size
 
