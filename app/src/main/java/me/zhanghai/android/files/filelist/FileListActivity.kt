@@ -11,16 +11,19 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import java8.nio.file.Path
 import me.zhanghai.android.files.app.AppActivity
 import me.zhanghai.android.files.file.MimeType
+import me.zhanghai.android.files.ui.cloud.CloudStorageFragment
+import me.zhanghai.android.files.ui.home.HomeFragment
 import me.zhanghai.android.files.util.createIntent
 import me.zhanghai.android.files.util.extraPath
 import me.zhanghai.android.files.util.putArgs
 
-class FileListActivity : AppActivity() {
-    private lateinit var fragment: FileListFragment
+class FileListActivity : AppActivity(), BottomNavHost {
+    private var fragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,19 +31,37 @@ class FileListActivity : AppActivity() {
         // Calls ensureSubDecor().
         findViewById<View>(android.R.id.content)
         if (savedInstanceState == null) {
-            fragment = FileListFragment().putArgs(FileListFragment.Args(intent))
-            supportFragmentManager.commit { add(android.R.id.content, fragment) }
+            val action = intent?.action
+            val newFragment = if (action == null || action == Intent.ACTION_MAIN) {
+                HomeFragment()
+            } else {
+                FileListFragment().putArgs(FileListFragment.Args(intent))
+            }
+            fragment = newFragment
+            supportFragmentManager.commit { add(android.R.id.content, newFragment) }
         } else {
             fragment = supportFragmentManager.findFragmentById(android.R.id.content)
-                as FileListFragment
         }
     }
 
     override fun onKeyShortcut(keyCode: Int, event: KeyEvent): Boolean {
-        if (fragment.onKeyShortcut(keyCode, event)) {
+        val fileListFragment = fragment as? FileListFragment
+        if (fileListFragment != null && fileListFragment.onKeyShortcut(keyCode, event)) {
             return true
         }
         return super.onKeyUp(keyCode, event)
+    }
+
+    override fun showHome() {
+        supportFragmentManager.commit {
+            replace(android.R.id.content, HomeFragment())
+        }
+    }
+
+    override fun showCloudStorage() {
+        supportFragmentManager.commit {
+            replace(android.R.id.content, CloudStorageFragment())
+        }
     }
 
     companion object {

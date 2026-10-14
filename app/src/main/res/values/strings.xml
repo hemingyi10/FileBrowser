@@ -812,4 +812,43 @@
 
     <string name="shortcut_downloads_title" translatable="false">@string/navigation_standard_directory_downloads</string>
     <string name="shortcut_ftp_server_title" translatable="false">@string/ftp_server_title</string>
+    <!-- Xiaomi style UI -->
+    <string name="home_title">文件</string>
+    <string name="home_subtitle">浏览</string>
+    <string name="category_filter">类别筛选</string>
+    <string name="category_documents">文档</string>
+    <string name="category_images">图片</string>
+    <string name="category_videos">视频</string>
+    <string name="category_audio">音乐</string>
+    <string name="category_archives">压缩包</string>
+    <string name="category_apks">安装包</string>
+    <string name="category_filter_all">全部</string>
+    <string name="category_filter_doc">DOC</string>
+    <string name="category_filter_xls">XLS</string>
+    <string name="category_filter_pdf">PDF</string>
+    <string name="category_filter_ppt">PPT</string>
+    <string name="category_filter_other">其他</string>
+    <string name="category_filter_zip">ZIP</string>
+    <string name="category_filter_rar">RAR</string>
+    <string name="category_filter_7z">7Z</string>
+    <string name="category_empty">该类别暂无文件</string>
+    <string name="category_loading">加载中…</string>
+    <string name="category_group_format">%1$s | %2$d项</string>
+    <string name="bottom_nav_browse">浏览</string>
+    <string name="bottom_nav_cloud">云盘</string>
+    <string name="cloud_storage_title">云盘</string>
+    <string name="cloud_title">云盘</string>
+    <string name="cloud_storage_add">添加存储空间</string>
+    <string name="cloud_nas">NAS</string>
+    <string name="cloud_smb">SMB</string>
+    <string name="cloud_ftp">FTP</string>
+    <string name="cloud_sftp">SFTP</string>
+    <string name="cloud_webdav">WebDAV</string>
+    <string name="cloud_storage_saved">已连接存储</string>
+    <string name="cloud_storage_entry_nas_desc">聚合全部云盘协议</string>
+    <string name="cloud_storage_entry_smb_desc">添加 SMB 服务器</string>
+    <string name="cloud_storage_entry_ftp_desc">添加 FTP 服务器</string>
+    <string name="cloud_storage_entry_sftp_desc">添加 SFTP 服务器</string>
+    <string name="cloud_storage_entry_webdav_desc">添加 WebDAV 服务器</string>
+    <string name="file_list_action_multi_select">多选</string>
 </resources>

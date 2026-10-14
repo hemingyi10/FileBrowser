@@ -764,6 +764,17 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         actionBar.findViewById<View>(R.id.bottomActionMore).setOnClickListener {
             showBottomMoreMenu(it)
         }
+        actionBar.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
+            selectAllFiles()
+        }
+        initBottomNavBar()
+    }
+
+    private fun initBottomNavBar() {
+        binding.bottomNavBrowse.isSelected = true
+        val host = requireActivity() as? BottomNavHost
+        binding.bottomNavBrowse.setOnClickListener { host?.showHome() }
+        binding.bottomNavCloud.setOnClickListener { host?.showCloudStorage() }
     }
 
     private fun showBottomMoreMenu(anchor: View) {

@@ -29,6 +29,16 @@
             android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow">
 
             <ImageButton
+                android:id="@+id/bottomActionMultiSelect"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/file_list_action_multi_select"
+                android:scaleType="centerInside"
+                android:src="@drawable/check_icon_control_normal_24dp"
+                android:tint="#FFFFFF" />
+
+            <ImageButton
                 android:id="@+id/bottomActionNewFolder"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -82,6 +92,40 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/more_vertical_icon_white_24dp"
                 android:tint="#FFFFFF" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomNavBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F5F5F5"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/bottomNavBrowse"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/bottom_nav_browse"
+                android:textColor="#757575"
+                android:textSize="15sp" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:background="#33000000" />
+
+            <TextView
+                android:id="@+id/bottomNavCloud"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/bottom_nav_cloud"
+                android:textColor="#757575"
+                android:textSize="15sp" />
         </LinearLayout>
 
         <androidx.appcompat.widget.Toolbar
