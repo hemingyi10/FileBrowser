@@ -67,7 +67,7 @@ class CloudStorageFragment : Fragment() {
             }
         )
         binding.recyclerView.adapter = adapter
-        binding.bottomActionBar.isVisible = false
+        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = false
         setupBottomNavBar()
         refresh()
     }
@@ -78,10 +78,10 @@ class CloudStorageFragment : Fragment() {
     }
 
     private fun setupBottomNavBar() {
-        binding.bottomNavCloud.isSelected = true
+        binding.root.findViewById<View>(R.id.bottomNavCloud).isSelected = true
         val host = requireActivity() as? BottomNavHost
-        binding.bottomNavBrowse.setOnClickListener { host?.showHome() }
-        binding.bottomNavCloud.setOnClickListener { host?.showCloudStorage() }
+        binding.root.findViewById<View>(R.id.bottomNavBrowse).setOnClickListener { host?.showHome() }
+        binding.root.findViewById<View>(R.id.bottomNavCloud).setOnClickListener { host?.showCloudStorage() }
     }
 
     private fun refresh() {

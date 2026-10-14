@@ -40,15 +40,15 @@ class HomeFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
         adapter = HomeCategoryAdapter { category -> openCategory(category) }
         binding.recyclerView.adapter = adapter
-        binding.bottomActionBar.isVisible = false
+        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = false
         setupBottomNavBar()
     }
 
     private fun setupBottomNavBar() {
-        binding.bottomNavBrowse.isSelected = true
+        binding.root.findViewById<View>(R.id.bottomNavBrowse).isSelected = true
         val host = requireActivity() as? BottomNavHost
-        binding.bottomNavBrowse.setOnClickListener { host?.showHome() }
-        binding.bottomNavCloud.setOnClickListener { host?.showCloudStorage() }
+        binding.root.findViewById<View>(R.id.bottomNavBrowse).setOnClickListener { host?.showHome() }
+        binding.root.findViewById<View>(R.id.bottomNavCloud).setOnClickListener { host?.showCloudStorage() }
     }
 
     private fun openCategory(category: Category) {

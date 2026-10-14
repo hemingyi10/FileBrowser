@@ -740,7 +740,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     }
 
     private fun initBottomActionBar() {
-        val actionBar = binding.bottomActionBar
+        val actionBar = binding.root.findViewById<View>(R.id.bottomActionBar)
         actionBar.findViewById<View>(R.id.bottomActionNewFolder).setOnClickListener {
             showCreateDirectoryDialog()
         }
@@ -771,10 +771,10 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     }
 
     private fun initBottomNavBar() {
-        binding.bottomNavBrowse.isSelected = true
+        binding.root.findViewById<View>(R.id.bottomNavBrowse).isSelected = true
         val host = requireActivity() as? BottomNavHost
-        binding.bottomNavBrowse.setOnClickListener { host?.showHome() }
-        binding.bottomNavCloud.setOnClickListener { host?.showCloudStorage() }
+        binding.root.findViewById<View>(R.id.bottomNavBrowse).setOnClickListener { host?.showHome() }
+        binding.root.findViewById<View>(R.id.bottomNavCloud).setOnClickListener { host?.showCloudStorage() }
     }
 
     private fun showBottomMoreMenu(anchor: View) {

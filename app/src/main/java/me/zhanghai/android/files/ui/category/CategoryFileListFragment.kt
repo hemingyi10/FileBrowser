@@ -198,7 +198,7 @@ class CategoryFileListFragment : Fragment() {
         adapter = CategoryFileListAdapter { file -> openFile(file) }
         binding.recyclerView.adapter = adapter
         setupFilterBar()
-        binding.bottomActionBar.isVisible = false
+        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = false
         setupBottomNavBar()
         loadFiles()
     }
@@ -256,10 +256,10 @@ class CategoryFileListFragment : Fragment() {
     }
 
     private fun setupBottomNavBar() {
-        binding.bottomNavBrowse.isSelected = true
+        binding.root.findViewById<View>(R.id.bottomNavBrowse).isSelected = true
         val host = requireActivity() as? BottomNavHost
-        binding.bottomNavBrowse.setOnClickListener { host?.showHome() }
-        binding.bottomNavCloud.setOnClickListener { host?.showCloudStorage() }
+        binding.root.findViewById<View>(R.id.bottomNavBrowse).setOnClickListener { host?.showHome() }
+        binding.root.findViewById<View>(R.id.bottomNavCloud).setOnClickListener { host?.showCloudStorage() }
     }
 
     private fun loadFiles() {
@@ -363,7 +363,7 @@ class CategoryFileListFragment : Fragment() {
         val groups = sortedMapOf<String, MutableList<FileItem>>(compareByDescending { it })
         for (file in files) {
             val key = try {
-                formatter.format(Date(file.attributes.lastModifiedTime.toMillis()))
+                formatter.format(Date(file.attributes.lastModifiedTime().toMillis()))
             } catch (e: Exception) {
                 "未知日期"
             }
@@ -372,7 +372,7 @@ class CategoryFileListFragment : Fragment() {
         val items = mutableListOf<CategoryItem>()
         for ((date, list) in groups) {
             items += CategoryItem.Header(String.format(Locale.getDefault(), "%s | %d项", date, list.size))
-            items += list.sortedByDescending { it.attributes.lastModifiedTime.toMillis() }
+            items += list.sortedByDescending { it.attributes.lastModifiedTime().toMillis() }
                 .map { CategoryItem.Entry(it) }
         }
         return items
