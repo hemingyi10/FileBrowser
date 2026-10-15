@@ -232,7 +232,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         if (args.embedded) {
             binding.appBarLayout.isVisible = false
             binding.speedDialView.isVisible = false
-            binding.bottomBarLayout.isVisible = false
+            // 内嵌首页时不再隐藏自身底栏，由本 Fragment 渲染与云盘目录页同构的完整底栏
             binding.drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
         overlayActionMode = OverlayToolbarActionMode(binding.overlayToolbar, binding.toolbar)
@@ -386,8 +386,13 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         initBottomActionBar()
         binding.bottomToolbar.isVisible = false
         if (args.embedded) {
-            // 内嵌首页时隐藏自身底栏，由 HomeFragment 根底栏统一接管（避免两套底栏重复）
-            binding.persistentBarLayout.hideBar(binding.bottomBarLayout, animate = false)
+            // 内嵌首页时也显示自身底栏，与云盘目录页（独立 FileListFragment）完全同构；
+            // HomeFragment 根布局 include 的底栏由 HomeFragment 隐藏，避免两套底栏重复
+            binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
+            // 确保底部栏在布局完成后也保持显示
+            binding.persistentBarLayout.post {
+                binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
+            }
         } else {
             binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
             // 确保底部栏在布局完成后也保持显示
@@ -755,36 +760,12 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     }
 
     /**
-     * 绑定宿主页面（如 HomeFragment）底部操作栏按钮，操作转发到本内嵌 FileListFragment。
+     * 内嵌首页时不再绑定宿主页面（HomeFragment）根布局中的底栏；
+     * 改为绑定本 Fragment 自身底栏（等价于 initBottomActionBar()），
+     * 与云盘目录页（独立 FileListFragment）完全同构。
      */
     fun bindHostBottomActionBar(rootView: View) {
-        rootView.findViewById<View>(R.id.bottomActionBar).isVisible = true
-        rootView.findViewById<View>(R.id.bottomActionNewFolder).setOnClickListener {
-            showCreateDirectoryDialog()
-        }
-        rootView.findViewById<View>(R.id.bottomActionCopy).setOnClickListener {
-            if (viewModel.selectedFiles.isEmpty()) {
-                showToast(getString(R.string.file_list_action_copy_no_selection))
-            } else {
-                copyFiles(viewModel.selectedFiles)
-            }
-        }
-        rootView.findViewById<View>(R.id.bottomActionRefresh).setOnClickListener {
-            refresh()
-        }
-        rootView.findViewById<View>(R.id.bottomActionPaste).setOnClickListener {
-            if (viewModel.pasteState.files.isEmpty()) {
-                showToast(getString(R.string.file_list_action_paste_no_selection))
-            } else {
-                pasteFiles(viewModel.currentPath)
-            }
-        }
-        rootView.findViewById<View>(R.id.bottomActionMore).setOnClickListener {
-            showBottomMoreMenu(it)
-        }
-        rootView.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
-            toggleMultiSelectMode()
-        }
+        initBottomActionBar()
     }
 
     private fun initBottomActionBar() {
@@ -872,6 +853,22 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         }
         R.id.action_refresh -> {
             refresh()
+            true
+        }
+        R.id.action_properties -> {
+            if (viewModel.selectedFiles.size == 1) {
+                showPropertiesDialog(viewModel.selectedFiles.first())
+            } else {
+                showToast(getString(R.string.file_list_action_no_single_selection))
+            }
+            true
+        }
+        R.id.action_rename -> {
+            if (viewModel.selectedFiles.size == 1) {
+                showRenameFileDialog(viewModel.selectedFiles.first())
+            } else {
+                showToast(getString(R.string.file_list_action_no_single_selection))
+            }
             true
         }
         else -> false

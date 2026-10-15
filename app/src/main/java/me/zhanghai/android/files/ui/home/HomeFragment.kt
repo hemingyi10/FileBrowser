@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import me.zhanghai.android.files.R
 import me.zhanghai.android.files.databinding.HomeFragmentBinding
-import me.zhanghai.android.files.filelist.BottomNavHost
 import me.zhanghai.android.files.filelist.FileListActivity
 import me.zhanghai.android.files.filelist.FileListFragment
 import me.zhanghai.android.files.settings.Settings
@@ -46,8 +45,8 @@ class HomeFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
         adapter = HomeCategoryAdapter { category -> openCategory(category) }
         binding.recyclerView.adapter = adapter
-        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = true
-        setupBottomNavBar()
+        // 浏览页底栏由内嵌 FileListFragment 自身渲染（与云盘目录页同构），隐藏 HomeFragment 根布局 include 的底栏
+        binding.root.findViewById<View>(R.id.bottomBarLayout).isVisible = false
         embedInternalStorage()
     }
 
@@ -63,18 +62,8 @@ class HomeFragment : Fragment() {
             childFragmentManager.commit {
                 add(R.id.fileListContainer, fileListFragment)
             }
-            fileListFragment.bindHostBottomActionBar(binding.root)
-        } else {
-            (existing as FileListFragment).bindHostBottomActionBar(binding.root)
         }
-        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = true
-    }
-
-    private fun setupBottomNavBar() {
-        binding.root.findViewById<View>(R.id.bottomNavBrowse).isSelected = true
-        val host = requireActivity() as? BottomNavHost
-        binding.root.findViewById<View>(R.id.bottomNavBrowse).setOnClickListener { host?.showHome() }
-        binding.root.findViewById<View>(R.id.bottomNavCloud).setOnClickListener { host?.showCloudStorage() }
+        binding.root.findViewById<View>(R.id.bottomBarLayout).isVisible = false
     }
 
     private fun openCategory(category: Category) {

@@ -262,6 +262,9 @@
     <string name="file_list_action_more">更多</string>
     <string name="file_list_action_copy_no_selection">未选择要复制的文件</string>
     <string name="file_list_action_paste_no_selection">剪贴板为空</string>
+    <string name="file_list_action_properties">文件属性</string>
+    <string name="file_list_action_rename">重命名</string>
+    <string name="file_list_action_no_single_selection">请先选择一个文件</string>
     <string name="file_list_action_sort_by_name">名称</string>
     <string name="file_list_action_sort_by_type">类型</string>
     <string name="file_list_action_sort_by_size">大小</string>

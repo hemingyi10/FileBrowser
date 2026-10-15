@@ -294,6 +294,9 @@
     <string name="file_list_action_more">More</string>
     <string name="file_list_action_copy_no_selection">Nothing selected to copy</string>
     <string name="file_list_action_paste_no_selection">Nothing to paste</string>
+    <string name="file_list_action_properties">File properties</string>
+    <string name="file_list_action_rename">Rename</string>
+    <string name="file_list_action_no_single_selection">Please select a single file</string>
     <string name="file_list_action_sort_by_name">Name</string>
     <string name="file_list_action_sort_by_type">Type</string>
     <string name="file_list_action_sort_by_size">Size</string>
