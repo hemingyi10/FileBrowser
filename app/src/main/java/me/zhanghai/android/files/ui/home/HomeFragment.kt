@@ -46,21 +46,28 @@ class HomeFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
         adapter = HomeCategoryAdapter { category -> openCategory(category) }
         binding.recyclerView.adapter = adapter
-        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = false
+        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = true
         setupBottomNavBar()
         embedInternalStorage()
     }
 
     private fun embedInternalStorage() {
-        val intent = FileListActivity.createViewIntent(
-            Settings.FILE_LIST_DEFAULT_DIRECTORY.valueCompat
-        )
-        val fileListFragment = FileListFragment().putArgs(
-            FileListFragment.Args(intent, embedded = true)
-        )
-        childFragmentManager.commit {
-            add(R.id.fileListContainer, fileListFragment)
+        val existing = childFragmentManager.findFragmentById(R.id.fileListContainer)
+        if (existing == null) {
+            val intent = FileListActivity.createViewIntent(
+                Settings.FILE_LIST_DEFAULT_DIRECTORY.valueCompat
+            )
+            val fileListFragment = FileListFragment().putArgs(
+                FileListFragment.Args(intent, embedded = true)
+            )
+            childFragmentManager.commit {
+                add(R.id.fileListContainer, fileListFragment)
+            }
+            fileListFragment.bindHostBottomActionBar(binding.root)
+        } else {
+            (existing as FileListFragment).bindHostBottomActionBar(binding.root)
         }
+        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = true
     }
 
     private fun setupBottomNavBar() {

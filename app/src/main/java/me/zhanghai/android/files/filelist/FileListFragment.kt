@@ -387,6 +387,10 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         binding.persistentBarLayout.post {
             binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
         }
+        // 列表模式已移除：旧持久化 LIST(0) 统一迁移为 GRID(1)，保证默认网格显示
+        if (Settings.FILE_LIST_VIEW_TYPE.value == FileViewType.LIST) {
+            Settings.FILE_LIST_VIEW_TYPE.putValue(FileViewType.GRID)
+        }
         // 旧版本默认档位为 MEDIUM(1)，统一迁移为 SMALL(0) 以保证网格显示 6 列
         if (Settings.FILE_LIST_GRID_ICON_SIZE.value == GridIconSize.MEDIUM) {
             Settings.FILE_LIST_GRID_ICON_SIZE.putValue(GridIconSize.SMALL)
@@ -475,10 +479,6 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
                         !Settings.FILE_LIST_PERSISTENT_DRAWER_OPEN.valueCompat
                     )
                 }
-                true
-            }
-            R.id.action_view_list -> {
-                viewModel.viewType = FileViewType.LIST
                 true
             }
             R.id.action_view_grid -> {
@@ -678,7 +678,8 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
 
     private fun updateSpanCount() {
         layoutManager.spanCount = when (viewModel.viewType) {
-            FileViewType.LIST -> 1
+            // 列表模式已移除，此分支仅为枚举穷举保留，统一按网格显示
+            FileViewType.LIST -> 6
             FileViewType.GRID -> {
                 var widthDp = resources.configuration.screenWidthDp
                 val persistentDrawerLayout = binding.persistentDrawerLayout
@@ -713,12 +714,8 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         if (searchViewExpanded) {
             return
         }
-        val viewType = viewModel.viewType
-        val checkedViewTypeItem = when (viewType) {
-            FileViewType.LIST -> menuBinding.viewListItem
-            FileViewType.GRID -> menuBinding.viewGridItem
-        }
-        checkedViewTypeItem.isChecked = true
+        // 列表模式已移除，仅网格视图可勾选
+        menuBinding.viewGridItem.isChecked = true
         val sortOptions = viewModel.sortOptions
         val checkedSortByItem = when (sortOptions.by) {
             By.NAME -> menuBinding.sortByNameItem
@@ -747,6 +744,39 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
 
     private fun refresh() {
         viewModel.reload()
+    }
+
+    /**
+     * 绑定宿主页面（如 HomeFragment）底部操作栏按钮，操作转发到本内嵌 FileListFragment。
+     */
+    fun bindHostBottomActionBar(rootView: View) {
+        rootView.findViewById<View>(R.id.bottomActionBar).isVisible = true
+        rootView.findViewById<View>(R.id.bottomActionNewFolder).setOnClickListener {
+            showCreateDirectoryDialog()
+        }
+        rootView.findViewById<View>(R.id.bottomActionCopy).setOnClickListener {
+            if (viewModel.selectedFiles.isEmpty()) {
+                showToast(getString(R.string.file_list_action_copy_no_selection))
+            } else {
+                copyFiles(viewModel.selectedFiles)
+            }
+        }
+        rootView.findViewById<View>(R.id.bottomActionRefresh).setOnClickListener {
+            refresh()
+        }
+        rootView.findViewById<View>(R.id.bottomActionPaste).setOnClickListener {
+            if (viewModel.pasteState.files.isEmpty()) {
+                showToast(getString(R.string.file_list_action_paste_no_selection))
+            } else {
+                pasteFiles(viewModel.currentPath)
+            }
+        }
+        rootView.findViewById<View>(R.id.bottomActionMore).setOnClickListener {
+            showBottomMoreMenu(it)
+        }
+        rootView.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
+            selectAllFiles()
+        }
     }
 
     private fun initBottomActionBar() {
@@ -1829,7 +1859,6 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         val menu: Menu,
         val searchItem: MenuItem,
         val viewSortItem: MenuItem,
-        val viewListItem: MenuItem,
         val viewGridItem: MenuItem,
         val sortByNameItem: MenuItem,
         val sortByTypeItem: MenuItem,
@@ -1846,7 +1875,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
                 inflater.inflate(R.menu.file_list, menu)
                 return MenuBinding(
                     menu, menu.findItem(R.id.action_search), menu.findItem(R.id.action_view_sort),
-                    menu.findItem(R.id.action_view_list), menu.findItem(R.id.action_view_grid),
+                    menu.findItem(R.id.action_view_grid),
                     menu.findItem(R.id.action_sort_by_name),
                     menu.findItem(R.id.action_sort_by_type),
                     menu.findItem(R.id.action_sort_by_size),
