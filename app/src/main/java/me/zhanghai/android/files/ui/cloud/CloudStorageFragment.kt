@@ -108,13 +108,13 @@ class CloudStorageFragment : Fragment() {
         CloudStorageEntry(
             getString(R.string.cloud_nas),
             getString(R.string.cloud_storage_entry_nas_desc),
-            R.drawable.computer_icon_white_24dp,
+            R.drawable.file_directory_icon,
             { AddStorageDialogActivity::class.createIntent() }
         ),
         CloudStorageEntry(
             getString(R.string.cloud_smb),
             getString(R.string.cloud_storage_entry_smb_desc),
-            R.drawable.shared_directory_icon_white_24dp,
+            R.drawable.file_directory_icon,
             { AddLanSmbServerActivity::class.createIntent() }
         ),
         CloudStorageEntry(

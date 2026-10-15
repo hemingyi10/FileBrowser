@@ -10,6 +10,8 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +28,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -780,7 +783,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             showBottomMoreMenu(it)
         }
         rootView.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
-            enterMultiSelectMode()
+            toggleMultiSelectMode()
         }
     }
 
@@ -810,7 +813,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             showBottomMoreMenu(it)
         }
         actionBar.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
-            enterMultiSelectMode()
+            toggleMultiSelectMode()
         }
         initBottomNavBar()
     }
@@ -997,6 +1000,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     private fun onSelectedFilesChanged(files: FileItemSet) {
         updateOverlayToolbar()
         adapter.replaceSelectedFiles(files)
+        updateMultiSelectButtonState(files.isNotEmpty())
     }
 
     private fun updateOverlayToolbar() {
@@ -1185,6 +1189,38 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             return
         }
         adapter.selectFirstSelectableFile()
+    }
+
+    /**
+     * 多选按钮：在“进入多选模式”与“退出多选模式（清空选择）”之间切换。
+     * 按钮视觉状态由 onSelectedFilesChanged 回调统一同步。
+     */
+    private fun toggleMultiSelectMode() {
+        if (viewModel.selectedFiles.isNotEmpty()) {
+            viewModel.clearSelectedFiles()
+        } else {
+            enterMultiSelectMode()
+        }
+    }
+
+    private var multiSelectDefaultBackground: android.graphics.drawable.Drawable? = null
+
+    /**
+     * 多选开关视觉反馈：开启 = 蓝色圆角高亮背景 + 白色对勾；关闭 = 恢复默认背景与蓝色对勾。
+     */
+    private fun updateMultiSelectButtonState(active: Boolean) {
+        val button = binding.root.findViewById<View>(R.id.bottomActionMultiSelect)
+        if (multiSelectDefaultBackground == null) {
+            multiSelectDefaultBackground = button.background
+        }
+        button.background = if (active) {
+            requireContext().getDrawable(R.drawable.bg_multi_select_active)
+        } else {
+            multiSelectDefaultBackground
+        }
+        (button as? ImageButton)?.imageTintList = ColorStateList.valueOf(
+            if (active) Color.WHITE else 0xFF2196F3.toInt()
+        )
     }
 
     private fun onPasteStateChanged(pasteState: PasteState) {

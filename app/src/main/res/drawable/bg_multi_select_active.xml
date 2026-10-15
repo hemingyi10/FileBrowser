@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 多选按钮激活态背景：蓝色圆角高亮，配合白色对勾，一眼可辨识多选已开启 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#FF2196F3" />
+    <corners android:radius="10dp" />
+</shape>
