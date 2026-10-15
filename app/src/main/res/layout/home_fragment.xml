@@ -29,5 +29,13 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <include layout="@layout/file_list_fragment_bottom_bar_include" />
+    <!-- 用带 id 的容器包裹底栏 include：ViewBinding 不会把 include 的 merge 布局内 view 提升为字段，
+         且 findViewById(R.id.bottomBarLayout) 会先命中内嵌 FileListFragment 的同 id 底栏 -->
+    <FrameLayout
+        android:id="@+id/homeBottomBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/file_list_fragment_bottom_bar_include" />
+    </FrameLayout>
 </LinearLayout>

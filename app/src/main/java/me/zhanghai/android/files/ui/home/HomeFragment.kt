@@ -46,9 +46,9 @@ class HomeFragment : Fragment() {
         adapter = HomeCategoryAdapter { category -> openCategory(category) }
         binding.recyclerView.adapter = adapter
         // 浏览页底栏由内嵌 FileListFragment 自身渲染（与云盘目录页同构），隐藏 HomeFragment 根布局 include 的底栏
-        // 必须用 ViewBinding 精确引用自身 include 的底栏：findViewById 会先命中内嵌 FileListFragment
+        // 必须经唯一容器 homeBottomBarContainer 隐藏：findViewById 会先命中内嵌 FileListFragment
         // 同 id(bottomBarLayout) 的底栏（从类别页返回恢复时尤其如此），导致隐藏错对象、自身底栏残留并叠加
-        binding.bottomBarLayout.isVisible = false
+        binding.homeBottomBarContainer.isVisible = false
         embedInternalStorage()
     }
 
@@ -65,7 +65,7 @@ class HomeFragment : Fragment() {
                 add(R.id.fileListContainer, fileListFragment)
             }
         }
-        binding.bottomBarLayout.isVisible = false
+        binding.homeBottomBarContainer.isVisible = false
     }
 
     private fun openCategory(category: Category) {
