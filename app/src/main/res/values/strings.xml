@@ -837,7 +837,7 @@
     <string name="category_empty">该类别暂无文件</string>
     <string name="category_loading">加载中…</string>
     <string name="category_group_format">%1$s | %2$d项</string>
-    <string name="bottom_nav_browse">浏览</string>
+    <string name="bottom_nav_browse">本地</string>
     <string name="bottom_nav_cloud">云盘</string>
     <string name="cloud_storage_title">云盘</string>
     <string name="cloud_title">云盘</string>
