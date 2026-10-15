@@ -773,11 +773,25 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         actionBar.findViewById<View>(R.id.bottomActionNewFolder).setOnClickListener {
             showCreateDirectoryDialog()
         }
+        actionBar.findViewById<View>(R.id.bottomActionCut).setOnClickListener {
+            if (viewModel.selectedFiles.isEmpty()) {
+                showToast(getString(R.string.file_list_action_cut_no_selection))
+            } else {
+                cutFiles(viewModel.selectedFiles)
+            }
+        }
         actionBar.findViewById<View>(R.id.bottomActionCopy).setOnClickListener {
             if (viewModel.selectedFiles.isEmpty()) {
                 showToast(getString(R.string.file_list_action_copy_no_selection))
             } else {
                 copyFiles(viewModel.selectedFiles)
+            }
+        }
+        actionBar.findViewById<View>(R.id.bottomActionDelete).setOnClickListener {
+            if (viewModel.selectedFiles.isEmpty()) {
+                showToast(getString(R.string.file_list_action_delete_no_selection))
+            } else {
+                confirmDeleteFiles(viewModel.selectedFiles)
             }
         }
         actionBar.findViewById<View>(R.id.bottomActionRefresh).setOnClickListener {
@@ -841,6 +855,22 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         }
         R.id.action_create_directory -> {
             showCreateDirectoryDialog()
+            true
+        }
+        R.id.action_cut -> {
+            if (viewModel.selectedFiles.isEmpty()) {
+                showToast(getString(R.string.file_list_action_cut_no_selection))
+            } else {
+                cutFiles(viewModel.selectedFiles)
+            }
+            true
+        }
+        R.id.action_delete -> {
+            if (viewModel.selectedFiles.isEmpty()) {
+                showToast(getString(R.string.file_list_action_delete_no_selection))
+            } else {
+                confirmDeleteFiles(viewModel.selectedFiles)
+            }
             true
         }
         R.id.action_select_all -> {

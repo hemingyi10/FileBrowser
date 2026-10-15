@@ -68,6 +68,20 @@
                     android:tint="#4CAF50" />
 
                 <ImageButton
+                    android:id="@+id/bottomActionCut"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="6dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cut"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/cut_icon_control_normal_24dp"
+                    android:tint="#FF9800" />
+
+                <ImageButton
                     android:id="@+id/bottomActionCopy"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
@@ -79,7 +93,7 @@
                     android:contentDescription="@string/copy"
                     android:scaleType="centerInside"
                     android:src="@drawable/copy_icon_control_normal_24dp"
-                    android:tint="#FF9800" />
+                    android:tint="#00BCD4" />
 
                 <ImageButton
                     android:id="@+id/bottomActionRefresh"
@@ -108,6 +122,20 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/paste_icon_control_normal_24dp"
                     android:tint="#F44336" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="6dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/delete"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/delete_icon_control_normal_24dp"
+                    android:tint="#D32F2F" />
 
                 <ImageButton
                     android:id="@+id/bottomActionMore"

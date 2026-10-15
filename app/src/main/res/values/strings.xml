@@ -293,6 +293,8 @@
     <string name="file_list_action_grid_icon_large">Large icons</string>
     <string name="file_list_action_more">More</string>
     <string name="file_list_action_copy_no_selection">Nothing selected to copy</string>
+    <string name="file_list_action_cut_no_selection">Nothing selected to cut</string>
+    <string name="file_list_action_delete_no_selection">Nothing selected to delete</string>
     <string name="file_list_action_paste_no_selection">Nothing to paste</string>
     <string name="file_list_action_properties">File properties</string>
     <string name="file_list_action_rename">Rename</string>

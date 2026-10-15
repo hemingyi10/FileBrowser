@@ -261,6 +261,8 @@
     <string name="file_list_action_grid_icon_large">大图标</string>
     <string name="file_list_action_more">更多</string>
     <string name="file_list_action_copy_no_selection">未选择要复制的文件</string>
+    <string name="file_list_action_cut_no_selection">未选择要剪切的文件</string>
+    <string name="file_list_action_delete_no_selection">未选择要删除的文件</string>
     <string name="file_list_action_paste_no_selection">剪贴板为空</string>
     <string name="file_list_action_properties">文件属性</string>
     <string name="file_list_action_rename">重命名</string>
