@@ -8,13 +8,13 @@
     android:orientation="vertical"
     android:paddingStart="4dp"
     android:paddingEnd="4dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
     <ImageView
         android:id="@+id/iconImage"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:importantForAccessibility="no"
         android:scaleType="centerInside" />
 
@@ -22,22 +22,22 @@
         android:id="@+id/nameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="3dp"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
         android:textColor="#FFFFFFFF"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/descriptionText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="1dp"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
         android:textColor="#B3FFFFFF"
-        android:textSize="10sp" />
+        android:textSize="9sp" />
 </LinearLayout>

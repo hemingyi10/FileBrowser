@@ -20,10 +20,24 @@
         android:theme="?actionBarTheme">
 
         <!-- BottomBarLayout 为 FrameLayout，直接平铺子视图会全部堆叠在左上角并互相覆盖
-             （后绘制的下排导航会盖住上排操作栏）。必须用垂直 LinearLayout 包裹成上下排列。 -->
+             （后绘制的下排导航会盖住上排操作栏）。必须用垂直 LinearLayout 包裹成上下排列。
+             外侧用横向 LinearLayout + weight 将整组横条收窄至父宽 80% 并水平居中。 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
             android:orientation="vertical">
 
             <LinearLayout
@@ -156,6 +170,12 @@
                     android:inputType="text"
                     android:maxLines="1" />
             </androidx.appcompat.widget.Toolbar>
+        </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
         </LinearLayout>
     </me.zhanghai.android.files.ui.BottomBarLayout>
 </merge>
