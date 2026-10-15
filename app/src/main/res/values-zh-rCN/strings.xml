@@ -652,4 +652,5 @@
     <string name="about_author_name_title">张海</string>
     <string name="about_author_github_title">在 GitHub 上关注</string>
     <string name="about_author_twitter_title">在 Twitter 上关注</string>
+    <string name="category_multi_select_not_supported">类别页暂不支持多选</string>
 </resources>

@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -207,7 +208,7 @@ class CategoryFileListFragment : Fragment() {
         binding.recyclerView.layoutManager = gridLayoutManager
         binding.recyclerView.adapter = adapter
         setupFilterBar()
-        binding.root.findViewById<View>(R.id.bottomActionBar).isVisible = false
+        setupBottomActionBar()
         setupBottomNavBar()
         loadFiles()
     }
@@ -262,6 +263,18 @@ class CategoryFileListFragment : Fragment() {
         val value = TypedValue()
         requireContext().theme.resolveAttribute(attr, value, true)
         return value.data
+    }
+
+    private fun setupBottomActionBar() {
+        // 类别页恢复完整双行底栏（与浏览页/云盘目录页同构）；操作行仅启用对类别列表有意义的按钮
+        binding.root.findViewById<View>(R.id.bottomActionRefresh).setOnClickListener { loadFiles() }
+        binding.root.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
+            Toast.makeText(
+                requireContext(),
+                R.string.category_multi_select_not_supported,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun setupBottomNavBar() {

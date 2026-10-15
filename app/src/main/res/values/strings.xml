@@ -853,4 +853,5 @@
     <string name="cloud_storage_entry_sftp_desc">添加 SFTP 服务器</string>
     <string name="cloud_storage_entry_webdav_desc">添加 WebDAV 服务器</string>
     <string name="file_list_action_multi_select">多选</string>
+    <string name="category_multi_select_not_supported">Multi-select is not supported in category pages</string>
 </resources>
