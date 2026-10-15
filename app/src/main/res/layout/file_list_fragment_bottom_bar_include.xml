@@ -33,7 +33,7 @@
             <LinearLayout
                 android:id="@+id/bottomActionBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/file_list_toolbar_padding_start"
@@ -121,7 +121,7 @@
             <LinearLayout
                 android:id="@+id/bottomNavBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 android:background="#F5F5F5"
                 android:orientation="horizontal">
 
