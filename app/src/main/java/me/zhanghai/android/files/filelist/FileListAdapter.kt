@@ -132,6 +132,21 @@ class FileListAdapter(
         listener.selectFiles(files, true)
     }
 
+    /**
+     * 进入多选模式：选中第一个可选项以启动选择模式，之后用户可逐个点击
+     * 条目/图标进行勾选或取消勾选，而不是一键全选。
+     */
+    fun selectFirstSelectableFile(): Boolean {
+        for (index in 0..<itemCount) {
+            val file = getItem(index)
+            if (isFileSelectable(file)) {
+                listener.selectFile(file, true)
+                return true
+            }
+        }
+        return false
+    }
+
     private fun isFileSelectable(file: FileItem): Boolean {
         val pickOptions = pickOptions ?: return true
         return when (pickOptions.mode) {

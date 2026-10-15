@@ -780,7 +780,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             showBottomMoreMenu(it)
         }
         rootView.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
-            selectAllFiles()
+            enterMultiSelectMode()
         }
     }
 
@@ -810,7 +810,7 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             showBottomMoreMenu(it)
         }
         actionBar.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
-            selectAllFiles()
+            enterMultiSelectMode()
         }
         initBottomNavBar()
     }
@@ -1174,6 +1174,17 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
 
     private fun selectAllFiles() {
         adapter.selectAllFiles()
+    }
+
+    /**
+     * 多选按钮：进入文件多选模式（选中第一个可选项启动选择模式），
+     * 之后用户可逐个勾选/取消勾选，而非一键全选。
+     */
+    private fun enterMultiSelectMode() {
+        if (viewModel.selectedFiles.isNotEmpty()) {
+            return
+        }
+        adapter.selectFirstSelectableFile()
     }
 
     private fun onPasteStateChanged(pasteState: PasteState) {
