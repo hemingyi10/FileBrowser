@@ -68,10 +68,10 @@ class CloudStorageFragment : Fragment() {
                 }
             }
         )
-        val gridLayoutManager = GridLayoutManager(activity, 6).apply {
+        val gridLayoutManager = GridLayoutManager(activity, 5).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int =
-                    if (adapter.isSavedItem(position)) 6 else 1
+                    if (adapter.isSavedItem(position)) 5 else 1
             }
         }
         binding.recyclerView.layoutManager = gridLayoutManager
@@ -134,12 +134,6 @@ class CloudStorageFragment : Fragment() {
             getString(R.string.cloud_storage_entry_webdav_desc),
             R.drawable.sd_card_icon_white_24dp,
             { EditWebDavServerActivity::class.createIntent().putArgs(EditWebDavServerFragment.Args()) }
-        ),
-        CloudStorageEntry(
-            getString(R.string.cloud_storage_add),
-            getString(R.string.cloud_storage_add),
-            R.drawable.add_icon_white_24dp,
-            { AddStorageDialogActivity::class.createIntent() }
         )
     )
 }

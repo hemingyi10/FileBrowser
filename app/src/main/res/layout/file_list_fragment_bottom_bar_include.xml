@@ -19,135 +19,143 @@
         android:fitsSystemWindows="true"
         android:theme="?actionBarTheme">
 
+        <!-- BottomBarLayout 为 FrameLayout，直接平铺子视图会全部堆叠在左上角并互相覆盖
+             （后绘制的下排导航会盖住上排操作栏）。必须用垂直 LinearLayout 包裹成上下排列。 -->
         <LinearLayout
-            android:id="@+id/bottomActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/file_list_toolbar_padding_start"
-            android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/bottomActionMultiSelect"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/file_list_action_multi_select"
-                android:scaleType="centerInside"
-                android:src="@drawable/check_icon_control_normal_24dp"
-                android:tint="#FFFFFF" />
-
-            <ImageButton
-                android:id="@+id/bottomActionNewFolder"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/file_list_action_create_directory"
-                android:scaleType="centerInside"
-                android:src="@drawable/add_icon_white_24dp"
-                android:tint="#FFFFFF" />
-
-            <ImageButton
-                android:id="@+id/bottomActionCopy"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/copy"
-                android:scaleType="centerInside"
-                android:src="@drawable/copy_icon_control_normal_24dp"
-                android:tint="#FFFFFF" />
-
-            <ImageButton
-                android:id="@+id/bottomActionRefresh"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/refresh"
-                android:scaleType="centerInside"
-                android:src="@drawable/reset_icon_white_24dp"
-                android:tint="#FFFFFF" />
-
-            <ImageButton
-                android:id="@+id/bottomActionPaste"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/paste"
-                android:scaleType="centerInside"
-                android:src="@drawable/paste_icon_control_normal_24dp"
-                android:tint="#FFFFFF" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/bottomActionMore"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/file_list_action_more"
-                android:scaleType="centerInside"
-                android:src="@drawable/more_vertical_icon_white_24dp"
-                android:tint="#FFFFFF" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/bottomNavBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#F5F5F5"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/bottomNavBrowse"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/bottom_nav_browse"
-                android:textColor="#757575"
-                android:textSize="15sp" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:background="#33000000" />
-
-            <TextView
-                android:id="@+id/bottomNavCloud"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/bottom_nav_cloud"
-                android:textColor="#757575"
-                android:textSize="15sp" />
-        </LinearLayout>
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/bottomToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:visibility="gone"
-            android:paddingStart="@dimen/file_list_toolbar_padding_start"
-            android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow"
-            app:navigationIcon="@drawable/close_icon_control_normal_24dp"
-            app:navigationContentDescription="@string/close"
-            app:popupTheme="?actionBarPopupTheme">
-
-            <EditText
-                android:id="@+id/bottomCreateFileNameEdit"
+            <LinearLayout
+                android:id="@+id/bottomActionBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="@string/file_list_create_file_name_hint"
-                android:importantForAutofill="no"
-                android:inputType="text"
-                android:maxLines="1" />
-        </androidx.appcompat.widget.Toolbar>
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/file_list_toolbar_padding_start"
+                android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow">
+
+                <ImageButton
+                    android:id="@+id/bottomActionMultiSelect"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/file_list_action_multi_select"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/check_icon_control_normal_24dp"
+                    android:tint="#FFFFFF" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionNewFolder"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/file_list_action_create_directory"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/add_icon_white_24dp"
+                    android:tint="#FFFFFF" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionCopy"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/copy"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/copy_icon_control_normal_24dp"
+                    android:tint="#FFFFFF" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionRefresh"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/refresh"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/reset_icon_white_24dp"
+                    android:tint="#FFFFFF" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionPaste"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/paste"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/paste_icon_control_normal_24dp"
+                    android:tint="#FFFFFF" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionMore"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/file_list_action_more"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/more_vertical_icon_white_24dp"
+                    android:tint="#FFFFFF" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bottomNavBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F5F5F5"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/bottomNavBrowse"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/bottom_nav_browse"
+                    android:textColor="#757575"
+                    android:textSize="15sp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#33000000" />
+
+                <TextView
+                    android:id="@+id/bottomNavCloud"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/bottom_nav_cloud"
+                    android:textColor="#757575"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/bottomToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:visibility="gone"
+                android:paddingStart="@dimen/file_list_toolbar_padding_start"
+                android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow"
+                app:navigationIcon="@drawable/close_icon_control_normal_24dp"
+                app:navigationContentDescription="@string/close"
+                app:popupTheme="?actionBarPopupTheme">
+
+                <EditText
+                    android:id="@+id/bottomCreateFileNameEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="@string/file_list_create_file_name_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </androidx.appcompat.widget.Toolbar>
+        </LinearLayout>
     </me.zhanghai.android.files.ui.BottomBarLayout>
 </merge>

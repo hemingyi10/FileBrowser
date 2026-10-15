@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="rectangle">
-            <corners android:radius="12dp" />
-            <solid android:color="#4CAF50" />
-        </shape>
-    </item>
-    <item
-        android:drawable="@drawable/file_apk_icon"
-        android:gravity="center" />
-</layer-list>
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M22,6l-10,-4L2,6v12l10,4l10,-4V6zM12,8l6.11,2.44L12,12.89L5.89,10.44L12,8zM12,14.5l5,-2V18l-5,2v-5.5z" />
+</vector>

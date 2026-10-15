@@ -8,13 +8,13 @@
     android:orientation="vertical"
     android:paddingStart="4dp"
     android:paddingEnd="4dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
     <ImageView
         android:id="@+id/iconImage"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:importantForAccessibility="no"
         android:scaleType="centerInside" />
 

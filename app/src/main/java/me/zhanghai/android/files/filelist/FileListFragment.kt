@@ -382,10 +382,15 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         }
         initBottomActionBar()
         binding.bottomToolbar.isVisible = false
-        binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
-        // 确保底部栏在布局完成后也保持显示
-        binding.persistentBarLayout.post {
+        if (args.embedded) {
+            // 内嵌首页时隐藏自身底栏，由 HomeFragment 根底栏统一接管（避免两套底栏重复）
+            binding.persistentBarLayout.hideBar(binding.bottomBarLayout, animate = false)
+        } else {
             binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
+            // 确保底部栏在布局完成后也保持显示
+            binding.persistentBarLayout.post {
+                binding.persistentBarLayout.showBar(binding.bottomBarLayout, animate = false)
+            }
         }
         // 列表模式已移除：旧持久化 LIST(0) 统一迁移为 GRID(1)，保证默认网格显示
         if (Settings.FILE_LIST_VIEW_TYPE.value == FileViewType.LIST) {

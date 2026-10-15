@@ -838,7 +838,6 @@
     <string name="bottom_nav_cloud">云盘</string>
     <string name="cloud_storage_title">云盘</string>
     <string name="cloud_title">云盘</string>
-    <string name="cloud_storage_add">添加存储空间</string>
     <string name="cloud_nas">NAS</string>
     <string name="cloud_smb">SMB</string>
     <string name="cloud_ftp">FTP</string>
