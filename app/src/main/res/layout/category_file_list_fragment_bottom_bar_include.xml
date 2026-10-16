@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+  ~ All Rights Reserved.
+  -->
+
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <me.zhanghai.android.files.ui.BottomBarLayout
+        android:id="@+id/bottomBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?colorSurface"
+        android:elevation="@dimen/design_appbar_elevation"
+        android:fitsSystemWindows="true"
+        android:theme="?actionBarTheme">
+
+        <!-- BottomBarLayout 为 FrameLayout，直接平铺子视图会全部堆叠在左上角并互相覆盖
+             （后绘制的下排导航会盖住上排操作栏）。必须用垂直 LinearLayout 包裹成上下排列。
+             宽度贯穿全屏（match_parent，去除 1:8:1 Space 居中的两侧黑边），
+             整体高度压至原 80%（按钮与导航行高度 48dp -> 38dp）。 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/bottomActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="23dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/file_list_toolbar_padding_start"
+                android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow">
+
+                <ImageButton
+                    android:id="@+id/bottomActionMultiSelect"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/file_list_action_multi_select"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/check_icon_control_normal_24dp"
+                    android:tint="#2196F3" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionNewFolder"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/file_list_action_create_directory"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/add_icon_white_24dp"
+                    android:tint="#4CAF50" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionCut"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cut"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/cut_icon_control_normal_24dp"
+                    android:tint="#FF9800" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionCopy"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/copy"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/copy_icon_control_normal_24dp"
+                    android:tint="#00BCD4" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionRefresh"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/refresh"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/reset_icon_white_24dp"
+                    android:tint="#9C27B0" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionPaste"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/paste"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/paste_icon_control_normal_24dp"
+                    android:tint="#F44336" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/delete"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/delete_icon_control_normal_24dp"
+                    android:tint="#D32F2F" />
+
+                <ImageButton
+                    android:id="@+id/bottomActionMore"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/file_list_action_more"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/more_vertical_icon_white_24dp"
+                    android:tint="#607D8B" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bottomNavBar"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:background="#F5F5F5"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/bottomNavBrowse"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/bottom_nav_browse"
+                    android:textColor="#757575"
+                    android:textSize="15sp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#33000000" />
+
+                <TextView
+                    android:id="@+id/bottomNavCloud"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/bottom_nav_cloud"
+                    android:textColor="#757575"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/bottomToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:visibility="gone"
+                android:paddingStart="@dimen/file_list_toolbar_padding_start"
+                android:paddingEnd="@dimen/file_list_toolbar_padding_end_no_overflow"
+                app:navigationIcon="@drawable/close_icon_control_normal_24dp"
+                app:navigationContentDescription="@string/close"
+                app:popupTheme="?actionBarPopupTheme">
+
+                <EditText
+                    android:id="@+id/bottomCreateFileNameEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="@string/file_list_create_file_name_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </androidx.appcompat.widget.Toolbar>
+        </LinearLayout>
+    </me.zhanghai.android.files.ui.BottomBarLayout>
+</merge>

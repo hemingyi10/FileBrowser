@@ -28,6 +28,7 @@ import me.zhanghai.android.files.settings.SettingsActivity
 import me.zhanghai.android.files.ui.category.Category
 import me.zhanghai.android.files.ui.category.CategoryFileListFragment
 import me.zhanghai.android.files.util.createIntent
+import me.zhanghai.android.files.util.startActivitySafe
 import me.zhanghai.android.files.util.putArgs
 import me.zhanghai.android.files.util.valueCompat
 
@@ -71,6 +72,22 @@ class HomeFragment : Fragment() {
         val activity = requireActivity() as AppCompatActivity
         activity.setTitle(R.string.home_title)
         activity.setSupportActionBar(binding.toolbar)
+        // 设置/关于菜单直挂 toolbar：确保本地（浏览/首页）界面可调出，不依赖 Activity options menu 分发
+        binding.toolbar.inflateMenu(R.menu.settings_about)
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_settings -> {
+                    startActivitySafe(SettingsActivity::class.createIntent())
+                    true
+                }
+                R.id.action_about -> {
+                    startActivitySafe(AboutActivity::class.createIntent())
+                    true
+                }
+                else -> false
+            }
+        }
+        activity.supportInvalidateOptionsMenu()
         binding.recyclerView.isNestedScrollingEnabled = false
         binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
         adapter = HomeCategoryAdapter { category -> openCategory(category) }

@@ -54,5 +54,5 @@
             android:visibility="gone" />
     </FrameLayout>
 
-    <include layout="@layout/file_list_fragment_bottom_bar_include" />
+    <include layout="@layout/category_file_list_fragment_bottom_bar_include" />
 </LinearLayout>
