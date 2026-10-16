@@ -54,5 +54,12 @@
             android:visibility="gone" />
     </FrameLayout>
 
+    <!-- 列表区与底栏之间的分隔线：类别内容较少时列表底部留白与底栏背景同为深色，
+         视觉上会与操作行连成一片，导致“第二菜单栏过高”的误判；加 1dp 亮线明确底栏起点。 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/category_bottom_bar_divider" />
+
     <include layout="@layout/category_file_list_fragment_bottom_bar_include" />
 </LinearLayout>
