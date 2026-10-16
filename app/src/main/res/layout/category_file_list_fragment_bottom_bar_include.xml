@@ -22,8 +22,7 @@
         <!-- BottomBarLayout 为 FrameLayout，直接平铺子视图会全部堆叠在左上角并互相覆盖
              （后绘制的下排导航会盖住上排操作栏）。必须用垂直 LinearLayout 包裹成上下排列。
              宽度贯穿全屏（match_parent，去除 1:8:1 Space 居中的两侧黑边）。
-             类别页操作行与导航行均压至 30dp 等高（浏览/云盘页为 38dp 等高），
-             整体低于浏览/云盘页，避免导航行高于操作行造成"未生效"观感。 -->
+             类别页操作行与导航行均恢复 38dp 等高，与浏览/云盘页共用布局完全一致。 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +33,7 @@
             <LinearLayout
                 android:id="@+id/bottomActionBar"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="38dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/file_list_toolbar_padding_start"
@@ -43,10 +42,10 @@
                 <ImageButton
                     android:id="@+id/bottomActionMultiSelect"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/file_list_action_multi_select"
@@ -57,10 +56,10 @@
                 <ImageButton
                     android:id="@+id/bottomActionNewFolder"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/file_list_action_create_directory"
@@ -71,10 +70,10 @@
                 <ImageButton
                     android:id="@+id/bottomActionCut"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/cut"
@@ -85,10 +84,10 @@
                 <ImageButton
                     android:id="@+id/bottomActionCopy"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/copy"
@@ -99,10 +98,10 @@
                 <ImageButton
                     android:id="@+id/bottomActionRefresh"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/refresh"
@@ -113,10 +112,10 @@
                 <ImageButton
                     android:id="@+id/bottomActionPaste"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/paste"
@@ -127,10 +126,10 @@
                 <ImageButton
                     android:id="@+id/bottomActionDelete"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/delete"
@@ -141,10 +140,10 @@
                 <ImageButton
                     android:id="@+id/bottomActionMore"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/file_list_action_more"
@@ -156,17 +155,17 @@
             <LinearLayout
                 android:id="@+id/bottomNavBar"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="38dp"
                 android:background="#F5F5F5"
                 android:orientation="horizontal">
 
                 <ImageButton
                     android:id="@+id/bottomNavMenu"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:padding="4dp"
+                    android:padding="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/open_navigation_drawer"
                     android:scaleType="centerInside"
@@ -176,7 +175,7 @@
                 <TextView
                     android:id="@+id/bottomNavBrowse"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:layout_weight="1"
@@ -194,7 +193,7 @@
                 <TextView
                     android:id="@+id/bottomNavCloud"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="38dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:layout_weight="1"
