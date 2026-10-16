@@ -5,6 +5,7 @@
 
 package me.zhanghai.android.files.ui.category
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -34,6 +35,7 @@ import java8.nio.file.Files
 import java8.nio.file.Path
 import me.zhanghai.android.files.R
 import me.zhanghai.android.files.about.AboutActivity
+import me.zhanghai.android.files.app.clipboardManager
 import me.zhanghai.android.files.databinding.CategoryFileListFragmentBinding
 import me.zhanghai.android.files.file.FileItem
 import me.zhanghai.android.files.file.fileProviderUri
@@ -46,14 +48,28 @@ import me.zhanghai.android.files.file.isSupportedArchive
 import me.zhanghai.android.files.file.isVideo
 import me.zhanghai.android.files.file.loadFileItem
 import me.zhanghai.android.files.filelist.BottomNavHost
+import me.zhanghai.android.files.filelist.ConfirmDeleteFilesDialogFragment
+import me.zhanghai.android.files.filelist.EditFileActivity
+import me.zhanghai.android.files.filelist.FileItemSet
+import me.zhanghai.android.files.filelist.OpenFileAsDialogActivity
+import me.zhanghai.android.files.filelist.OpenFileAsDialogFragment
+import me.zhanghai.android.files.filelist.fileItemSetOf
 import me.zhanghai.android.files.filelist.name
+import me.zhanghai.android.files.filelist.toUserFriendlyString
 import me.zhanghai.android.files.filelist.supportsThumbnail
+import me.zhanghai.android.files.fileproperties.FilePropertiesDialogFragment
+import me.zhanghai.android.files.provider.archive.isArchivePath
 import me.zhanghai.android.files.settings.Settings
 import me.zhanghai.android.files.settings.SettingsActivity
+import me.zhanghai.android.files.util.copyText
 import me.zhanghai.android.files.util.createInstallPackageIntent
 import me.zhanghai.android.files.util.createIntent
+import me.zhanghai.android.files.util.createSendStreamIntent
 import me.zhanghai.android.files.util.createViewIntent
+import me.zhanghai.android.files.util.putArgs
+import me.zhanghai.android.files.util.startActivitySafe
 import me.zhanghai.android.files.util.valueCompat
+import me.zhanghai.android.files.util.withChooser
 
 enum class Category(
     @DrawableRes val iconRes: Int,
@@ -167,7 +183,7 @@ private fun FileItem.matchesArchiveFilter(index: Int): Boolean {
     }
 }
 
-class CategoryFileListFragment : Fragment() {
+class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Listener {
 
     companion object {
         private const val EXTRA_CATEGORY = "category"
@@ -228,7 +244,10 @@ class CategoryFileListFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-        adapter = CategoryFileListAdapter { file -> openFile(file) }
+        adapter = CategoryFileListAdapter(
+            { file -> openFile(file) },
+            { file, anchor -> showItemMenu(file, anchor) }
+        )
         val gridLayoutManager = GridLayoutManager(activity, 3).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int =
@@ -454,6 +473,90 @@ class CategoryFileListFragment : Fragment() {
             // Ignore activities that cannot handle this file.
         }
     }
+
+    private fun showItemMenu(file: FileItem, anchor: View) {
+        val popupMenu = PopupMenu(requireContext(), anchor)
+        popupMenu.menuInflater.inflate(R.menu.file_item, popupMenu.menu)
+        // 类别页没有目录上下文，隐藏剪切/复制/粘贴/压缩/解压/书签/快捷方式等项
+        val hiddenIds = listOf(
+            R.id.action_cut,
+            R.id.action_copy,
+            R.id.action_paste,
+            R.id.action_rename,
+            R.id.action_extract,
+            R.id.action_archive,
+            R.id.action_add_bookmark,
+            R.id.action_create_shortcut
+        )
+        for (id in hiddenIds) {
+            popupMenu.menu.findItem(id)?.isVisible = false
+        }
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_open_with -> {
+                    openFileWithIntent(file, true)
+                    true
+                }
+                R.id.action_share -> {
+                    shareFile(file)
+                    true
+                }
+                R.id.action_delete -> {
+                    ConfirmDeleteFilesDialogFragment.show(fileItemSetOf(file), this)
+                    true
+                }
+                R.id.action_copy_path -> {
+                    copyPath(file.path)
+                    true
+                }
+                R.id.action_properties -> {
+                    FilePropertiesDialogFragment.show(file, this)
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+
+    private fun openFileWithIntent(file: FileItem, withChooser: Boolean) {
+        val path = file.path
+        val mimeType = file.mimeType
+        if (path.isArchivePath) {
+            FileJobService.open(path, mimeType, withChooser, requireContext())
+        } else {
+            val intent = path.fileProviderUri.createViewIntent(mimeType)
+                .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                .let {
+                    if (withChooser) {
+                        it.withChooser(
+                            EditFileActivity::class.createIntent()
+                                .putArgs(EditFileActivity.Args(path, mimeType)),
+                            OpenFileAsDialogActivity::class.createIntent()
+                                .putArgs(OpenFileAsDialogFragment.Args(path))
+                        )
+                    } else {
+                        it
+                    }
+                }
+            startActivitySafe(intent)
+        }
+    }
+
+    private fun shareFile(file: FileItem) {
+        val uris = listOf(file.path.fileProviderUri)
+        val intent = uris.createSendStreamIntent(listOf(file.mimeType)).withChooser()
+        startActivitySafe(intent)
+    }
+
+    override fun deleteFiles(files: FileItemSet) {
+        FileJobService.delete(files.map { it.path }, requireContext())
+        loadFiles()
+    }
+
+    private fun copyPath(path: Path) {
+        clipboardManager.copyText(path.toUserFriendlyString(), requireContext())
+    }
 }
 
 sealed interface CategoryItem {
@@ -462,7 +565,8 @@ sealed interface CategoryItem {
 }
 
 class CategoryFileListAdapter(
-    private val listener: (FileItem) -> Unit
+    private val listener: (FileItem) -> Unit,
+    private val longClickListener: (FileItem, View) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items = mutableListOf<CategoryItem>()
@@ -494,7 +598,7 @@ class CategoryFileListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = items[position]) {
             is CategoryItem.Header -> (holder as HeaderViewHolder).textView.text = item.text
-            is CategoryItem.Entry -> (holder as EntryViewHolder).bind(item.file, listener)
+            is CategoryItem.Entry -> (holder as EntryViewHolder).bind(item.file, listener, longClickListener)
         }
     }
 
@@ -506,7 +610,7 @@ class CategoryFileListAdapter(
         private val thumbnailImage: ImageView = itemView.findViewById(R.id.thumbnailImage)
         private val nameText: TextView = itemView.findViewById(R.id.nameText)
 
-        fun bind(file: FileItem, listener: (FileItem) -> Unit) {
+        fun bind(file: FileItem, listener: (FileItem) -> Unit, longClickListener: (FileItem, View) -> Unit) {
             nameText.text = file.name
             val path = file.path
             val attributes = file.attributes
@@ -519,6 +623,10 @@ class CategoryFileListAdapter(
                 thumbnailImage.setImageResource(file.mimeType.iconRes)
             }
             itemView.setOnClickListener { listener(file) }
+            itemView.setOnLongClickListener {
+                longClickListener(file, itemView)
+                true
+            }
         }
     }
 
