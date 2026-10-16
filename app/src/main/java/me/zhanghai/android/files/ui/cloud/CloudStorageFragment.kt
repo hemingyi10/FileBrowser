@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -120,6 +121,24 @@ class CloudStorageFragment : Fragment() {
         val host = requireActivity() as? BottomNavHost
         binding.root.findViewById<View>(R.id.bottomNavBrowse).setOnClickListener { host?.showHome() }
         binding.root.findViewById<View>(R.id.bottomNavCloud).setOnClickListener { host?.showCloudStorage() }
+        binding.root.findViewById<View>(R.id.bottomNavMenu).setOnClickListener { view ->
+            val popupMenu = PopupMenu(requireContext(), view)
+            popupMenu.menuInflater.inflate(R.menu.settings_about, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_settings -> {
+                        startActivitySafe(SettingsActivity::class.createIntent())
+                        true
+                    }
+                    R.id.action_about -> {
+                        startActivitySafe(AboutActivity::class.createIntent())
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popupMenu.show()
+        }
     }
 
     private fun refresh() {

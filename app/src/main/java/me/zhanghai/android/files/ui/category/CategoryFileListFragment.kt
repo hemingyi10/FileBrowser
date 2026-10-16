@@ -6,7 +6,6 @@
 package me.zhanghai.android.files.ui.category
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -14,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -281,18 +281,12 @@ class CategoryFileListFragment : Fragment() {
     }
 
     private fun TextView.updateChipStyle() {
-        setTextColor(themeColor(if (isSelected) android.R.attr.colorAccent else android.R.attr.textColorSecondary))
+        setTextColor(if (isSelected) 0xFF2196F3.toInt() else 0xFF757575.toInt())
         background = if (isSelected) {
             context.getDrawable(R.drawable.filter_chip_selected)
         } else {
             null
         }
-    }
-
-    private fun themeColor(attr: Int): Int {
-        val value = TypedValue()
-        requireContext().theme.resolveAttribute(attr, value, true)
-        return value.data
     }
 
     private fun setupBottomActionBar() {
@@ -312,6 +306,24 @@ class CategoryFileListFragment : Fragment() {
         val host = requireActivity() as? BottomNavHost
         binding.root.findViewById<View>(R.id.bottomNavBrowse).setOnClickListener { host?.showHome() }
         binding.root.findViewById<View>(R.id.bottomNavCloud).setOnClickListener { host?.showCloudStorage() }
+        binding.root.findViewById<View>(R.id.bottomNavMenu).setOnClickListener { view ->
+            val popupMenu = PopupMenu(requireContext(), view)
+            popupMenu.menuInflater.inflate(R.menu.settings_about, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_settings -> {
+                        startActivity(SettingsActivity::class.createIntent())
+                        true
+                    }
+                    R.id.action_about -> {
+                        startActivity(AboutActivity::class.createIntent())
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popupMenu.show()
+        }
     }
 
     private fun loadFiles() {

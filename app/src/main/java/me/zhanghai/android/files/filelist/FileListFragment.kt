@@ -427,9 +427,8 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         super.onCreateOptionsMenu(menu, inflater)
 
         if (args.embedded) {
-            // 内嵌首页/浏览页：HomeFragment 顶部 toolbar 即 ActionBar，
-            // 由本 Fragment 直接提供设置/关于入口，避免依赖 HomeFragment 的菜单挂载。
-            inflater.inflate(R.menu.settings_about, menu)
+            // 内嵌首页/浏览页：设置/关于入口已移到底部导航栏最左三横按钮（bottomNavMenu），
+            // 此处不再挂载菜单，避免工具栏菜单渲染到状态栏。
             return
         }
         menuBinding = MenuBinding.inflate(menu, inflater)
@@ -835,6 +834,28 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         val host = requireActivity() as? BottomNavHost
         binding.root.findViewById<View>(R.id.bottomNavBrowse).setOnClickListener { host?.showHome() }
         binding.root.findViewById<View>(R.id.bottomNavCloud).setOnClickListener { host?.showCloudStorage() }
+        binding.root.findViewById<View>(R.id.bottomNavMenu).setOnClickListener { view ->
+            showSettingsAboutMenu(view)
+        }
+    }
+
+    private fun showSettingsAboutMenu(anchor: View) {
+        val popupMenu = PopupMenu(requireContext(), anchor)
+        popupMenu.menuInflater.inflate(R.menu.settings_about, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_settings -> {
+                    startActivitySafe(SettingsActivity::class.createIntent())
+                    true
+                }
+                R.id.action_about -> {
+                    startActivitySafe(AboutActivity::class.createIntent())
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 
     private fun showBottomMoreMenu(anchor: View) {
