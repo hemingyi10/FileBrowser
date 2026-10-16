@@ -18,7 +18,10 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -85,6 +88,12 @@ class CloudStorageFragment : Fragment() {
         val activity = requireActivity() as AppCompatActivity
         activity.setTitle(R.string.cloud_title)
         activity.setSupportActionBar(binding.toolbar)
+        // 顶部 Toolbar 单独消费状态栏高度，避免文字/菜单侵入系统状态栏
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBars = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            view.updatePadding(top = statusBars.top)
+            insets
+        }
         adapter = CloudStorageAdapter(
             object : CloudStorageAdapter.Listener {
                 override fun onClickEntry(entry: CloudStorageEntry) {

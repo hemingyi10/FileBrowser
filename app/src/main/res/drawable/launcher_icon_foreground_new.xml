@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 亮黄色文件夹前景图标（白底由 adaptive icon background 提供） -->
+<!-- 桌面图标前景：与文件浏览器内部文件夹图标(file_directory_icon)完全一致的
+     亮黄白底黄文件夹（顶部标签 #FFD54F + 主体 #FFB300 + 白色横条 #FFFFFF），
+     由 adaptive icon 白色 background 提供白底，graphic 放大 2.8 倍并居中。 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- 文件夹背面标签 -->
-    <path
-        android:fillColor="#FFC107"
-        android:pathData="M22,42 L30,32 L50,32 L56,42 Z" />
+    <group
+        android:scaleX="2.8"
+        android:scaleY="2.8"
+        android:translateX="20.4"
+        android:translateY="20.4">
 
-    <!-- 文件夹主体 -->
-    <path
-        android:fillColor="#FFC107"
-        android:pathData="M22,42 L86,42 L86,72 A8,8 0 0 1 78,80 L30,80 A8,8 0 0 1 22,72 Z" />
+        <!-- 文件夹顶部标签 -->
+        <path
+            android:fillColor="#FFD54F"
+            android:pathData="M2,6 L2,4.5 C2,3.2 3.2,2 4.5,2 L10,2 C11.4,2 12,2.6 12,4 L12,6 Z" />
 
-    <!-- 文件夹正面折页阴影，增强立体感 -->
-    <path
-        android:fillColor="#FFB300"
-        android:pathData="M22,70 L86,70 L86,72 A8,8 0 0 1 78,80 L30,80 A8,8 0 0 1 22,72 Z" />
+        <!-- 文件夹主体 -->
+        <path
+            android:fillColor="#FFB300"
+            android:pathData="M2,6 L22,6 C22.6,6 23,6.4 23,7 L23,20 C23,21.2 22.2,22 21,22 L3,22 C1.8,22 1,21.2 1,20 L1,7 C1,6.4 1.4,6 2,6 Z" />
+
+        <!-- 白色横条 -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M4,8 L20,8 C20.6,8 21,8.4 21,9 L21,10.5 C21,11.1 20.6,11.5 20,11.5 L4,11.5 C3.4,11.5 3,11.1 3,10.5 L3,9 C3,8.4 3.4,8 4,8 Z" />
+    </group>
 </vector>

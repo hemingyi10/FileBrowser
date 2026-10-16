@@ -6,6 +6,8 @@
 package me.zhanghai.android.files.ui.category
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,10 +16,12 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.pm.ShortcutInfoCompat
@@ -260,9 +264,25 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
         binding.toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+        // 修复顶部内容侵入状态栏：为 toolbar 单独消费状态栏高度作为 padding，
+        // 不消费 insets，保证底部 BottomBarLayout 仍能收到导航栏 inset。
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, top, 0, 0)
+            insets
+        }
+        // 多选模式下返回键先退出多选
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (adapter.multiSelectMode) {
+                exitMultiSelectMode()
+            } else {
+                isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+        }
         adapter = CategoryFileListAdapter(
-            { file -> openFile(file) },
-            { file, anchor -> showItemMenu(file, anchor) }
+            { file -> if (adapter.multiSelectMode) toggleSelection(file) else openFile(file) },
+            { file, anchor -> if (adapter.multiSelectMode) toggleSelection(file) else showItemMenu(file, anchor) }
         )
         val gridLayoutManager = GridLayoutManager(activity, 3).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -341,11 +361,76 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
         // 类别页恢复完整双行底栏（与浏览页/云盘目录页同构）；操作行仅启用对类别列表有意义的按钮
         binding.root.findViewById<View>(R.id.bottomActionRefresh).setOnClickListener { loadFiles() }
         binding.root.findViewById<View>(R.id.bottomActionMultiSelect).setOnClickListener {
+            if (adapter.multiSelectMode) {
+                exitMultiSelectMode()
+            } else {
+                enterMultiSelectMode()
+            }
+        }
+        binding.root.findViewById<View>(R.id.bottomActionDelete).setOnClickListener {
+            deleteSelectedFiles()
+        }
+    }
+
+    private fun enterMultiSelectMode() {
+        adapter.multiSelectMode = true
+        adapter.selectFirstSelectableFile()
+        updateMultiSelectUi()
+    }
+
+    private fun exitMultiSelectMode() {
+        adapter.multiSelectMode = false
+        adapter.clearSelection()
+        updateMultiSelectUi()
+    }
+
+    private fun toggleSelection(file: FileItem) {
+        adapter.toggleSelect(file)
+        updateMultiSelectUi()
+    }
+
+    private fun deleteSelectedFiles() {
+        val files = adapter.selectedPaths.mapNotNull { path ->
+            allFiles.firstOrNull { it.path == path }
+        }
+        if (files.isEmpty()) {
             Toast.makeText(
                 requireContext(),
-                R.string.category_multi_select_not_supported,
+                R.string.category_multi_select_empty,
                 Toast.LENGTH_SHORT
             ).show()
+            return
+        }
+        ConfirmDeleteFilesDialogFragment.show(fileItemSetOf(*files.toTypedArray()), this)
+    }
+
+    private fun updateMultiSelectUi() {
+        val multiSelect = adapter.multiSelectMode
+        val multiSelectButton = binding.root.findViewById<View>(R.id.bottomActionMultiSelect)
+        multiSelectButton.background = if (multiSelect) {
+            context?.getDrawable(R.drawable.bg_multi_select_active)
+        } else {
+            null
+        }
+        (multiSelectButton as? ImageButton)?.imageTintList = ColorStateList.valueOf(
+            if (multiSelect) Color.WHITE else 0xFF2196F3.toInt()
+        )
+        val hideIds = listOf(
+            R.id.bottomActionNewFolder,
+            R.id.bottomActionCut,
+            R.id.bottomActionCopy,
+            R.id.bottomActionPaste,
+            R.id.bottomActionMore
+        )
+        for (id in hideIds) {
+            binding.root.findViewById<View>(id).isVisible = !multiSelect
+        }
+        val deleteButton = binding.root.findViewById<View>(R.id.bottomActionDelete)
+        deleteButton.isVisible = true
+        deleteButton.background = if (multiSelect && adapter.selectedPaths.isNotEmpty()) {
+            context?.getDrawable(R.drawable.bg_multi_select_active)
+        } else {
+            null
         }
     }
 
@@ -595,6 +680,9 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
 
     override fun deleteFiles(files: FileItemSet) {
         FileJobService.delete(files.map { it.path }, requireContext())
+        if (adapter.multiSelectMode) {
+            exitMultiSelectMode()
+        }
         loadFiles()
     }
 
@@ -666,6 +754,10 @@ class CategoryFileListAdapter(
 
     private val items = mutableListOf<CategoryItem>()
 
+    var multiSelectMode = false
+
+    val selectedPaths = linkedSetOf<Path>()
+
     fun submit(list: List<CategoryItem>) {
         items.clear()
         items.addAll(list)
@@ -673,6 +765,25 @@ class CategoryFileListAdapter(
     }
 
     fun isHeader(position: Int): Boolean = items[position] is CategoryItem.Header
+
+    fun toggleSelect(file: FileItem) {
+        val path = file.path
+        if (!selectedPaths.remove(path)) {
+            selectedPaths.add(path)
+        }
+        notifyDataSetChanged()
+    }
+
+    fun clearSelection() {
+        selectedPaths.clear()
+        notifyDataSetChanged()
+    }
+
+    fun selectFirstSelectableFile() {
+        val firstEntry = items.firstOrNull { it is CategoryItem.Entry } as? CategoryItem.Entry ?: return
+        selectedPaths.add(firstEntry.file.path)
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount(): Int = items.size
 
@@ -693,7 +804,7 @@ class CategoryFileListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = items[position]) {
             is CategoryItem.Header -> (holder as HeaderViewHolder).textView.text = item.text
-            is CategoryItem.Entry -> (holder as EntryViewHolder).bind(item.file, listener, longClickListener)
+            is CategoryItem.Entry -> (holder as EntryViewHolder).bind(item.file, this)
         }
     }
 
@@ -703,9 +814,10 @@ class CategoryFileListAdapter(
 
     private class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val thumbnailImage: ImageView = itemView.findViewById(R.id.thumbnailImage)
+        private val checkBadgeImage: ImageView = itemView.findViewById(R.id.checkBadgeImage)
         private val nameText: TextView = itemView.findViewById(R.id.nameText)
 
-        fun bind(file: FileItem, listener: (FileItem) -> Unit, longClickListener: (FileItem, View) -> Unit) {
+        fun bind(file: FileItem, adapter: CategoryFileListAdapter) {
             nameText.text = file.name
             val path = file.path
             val attributes = file.attributes
@@ -717,9 +829,16 @@ class CategoryFileListAdapter(
             } else {
                 thumbnailImage.setImageResource(file.mimeType.iconRes)
             }
-            itemView.setOnClickListener { listener(file) }
+            val multiSelect = adapter.multiSelectMode
+            val selected = path in adapter.selectedPaths
+            checkBadgeImage.isVisible = multiSelect
+            checkBadgeImage.setImageResource(
+                if (selected) R.drawable.checkable_badge_icon_18dp
+                else R.drawable.category_check_unselected
+            )
+            itemView.setOnClickListener { adapter.listener(file) }
             itemView.setOnLongClickListener {
-                longClickListener(file, itemView)
+                adapter.longClickListener(file, itemView)
                 true
             }
         }

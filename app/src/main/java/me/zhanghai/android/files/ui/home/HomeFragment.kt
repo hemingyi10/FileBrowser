@@ -10,7 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.GridLayoutManager
@@ -43,6 +46,12 @@ class HomeFragment : Fragment() {
         // ActionBar 指向本页 toolbar；options menu（设置/关于）由内嵌 FileListFragment 统一提供，
         // 这里不再挂载，避免与 child Fragment 的菜单重复。
         activity.setSupportActionBar(binding.toolbar)
+        // 顶部 Toolbar 单独消费状态栏高度，避免文字/菜单侵入系统状态栏
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBars = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            view.updatePadding(top = statusBars.top)
+            insets
+        }
         binding.recyclerView.isNestedScrollingEnabled = false
         binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
         adapter = HomeCategoryAdapter { category -> openCategory(category) }
