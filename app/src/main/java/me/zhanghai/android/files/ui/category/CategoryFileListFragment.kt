@@ -48,6 +48,7 @@ import me.zhanghai.android.files.file.isSupportedArchive
 import me.zhanghai.android.files.file.isVideo
 import me.zhanghai.android.files.file.loadFileItem
 import me.zhanghai.android.files.filelist.BottomNavHost
+import me.zhanghai.android.files.filejob.FileJobService
 import me.zhanghai.android.files.filelist.ConfirmDeleteFilesDialogFragment
 import me.zhanghai.android.files.filelist.EditFileActivity
 import me.zhanghai.android.files.filelist.FileItemSet
