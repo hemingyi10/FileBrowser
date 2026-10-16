@@ -7,9 +7,6 @@ package me.zhanghai.android.files.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -19,16 +16,12 @@ import androidx.fragment.app.commit
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import me.zhanghai.android.files.R
-import me.zhanghai.android.files.about.AboutActivity
 import me.zhanghai.android.files.databinding.HomeFragmentBinding
 import me.zhanghai.android.files.filelist.FileListActivity
 import me.zhanghai.android.files.filelist.FileListFragment
 import me.zhanghai.android.files.settings.Settings
-import me.zhanghai.android.files.settings.SettingsActivity
 import me.zhanghai.android.files.ui.category.Category
 import me.zhanghai.android.files.ui.category.CategoryFileListFragment
-import me.zhanghai.android.files.util.createIntent
-import me.zhanghai.android.files.util.startActivitySafe
 import me.zhanghai.android.files.util.putArgs
 import me.zhanghai.android.files.util.valueCompat
 
@@ -36,30 +29,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: HomeFragmentBinding
     private lateinit var adapter: HomeCategoryAdapter
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.settings_about, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                startActivity(SettingsActivity::class.createIntent())
-                true
-            }
-            R.id.action_about -> {
-                startActivity(AboutActivity::class.createIntent())
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -71,23 +40,9 @@ class HomeFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         val activity = requireActivity() as AppCompatActivity
         activity.setTitle(R.string.home_title)
+        // ActionBar 指向本页 toolbar；options menu（设置/关于）由内嵌 FileListFragment 统一提供，
+        // 这里不再挂载，避免与 child Fragment 的菜单重复。
         activity.setSupportActionBar(binding.toolbar)
-        // 设置/关于菜单直挂 toolbar：确保本地（浏览/首页）界面可调出，不依赖 Activity options menu 分发
-        binding.toolbar.inflateMenu(R.menu.settings_about)
-        binding.toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_settings -> {
-                    startActivitySafe(SettingsActivity::class.createIntent())
-                    true
-                }
-                R.id.action_about -> {
-                    startActivitySafe(AboutActivity::class.createIntent())
-                    true
-                }
-                else -> false
-            }
-        }
-        activity.supportInvalidateOptionsMenu()
         binding.recyclerView.isNestedScrollingEnabled = false
         binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
         adapter = HomeCategoryAdapter { category -> openCategory(category) }

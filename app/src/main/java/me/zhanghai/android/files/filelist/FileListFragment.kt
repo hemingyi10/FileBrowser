@@ -58,6 +58,7 @@ import java8.nio.file.Paths
 import kotlin.math.roundToInt
 import kotlinx.parcelize.Parcelize
 import me.zhanghai.android.files.R
+import me.zhanghai.android.files.about.AboutActivity
 import me.zhanghai.android.files.app.application
 import me.zhanghai.android.files.app.clipboardManager
 import me.zhanghai.android.files.compat.checkSelfPermissionCompat
@@ -87,6 +88,7 @@ import me.zhanghai.android.files.provider.archive.createArchiveRootPath
 import me.zhanghai.android.files.provider.archive.isArchivePath
 import me.zhanghai.android.files.provider.linux.isLinuxPath
 import me.zhanghai.android.files.settings.Settings
+import me.zhanghai.android.files.settings.SettingsActivity
 import me.zhanghai.android.files.terminal.Terminal
 import me.zhanghai.android.files.ui.AppBarLayoutExpandHackListener
 import me.zhanghai.android.files.ui.CoordinatorAppBarLayout
@@ -199,9 +201,9 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!args.embedded) {
-            setHasOptionsMenu(true)
-        }
+        // 无条件参与 options menu：embedded（内嵌首页）时提供 settings_about，
+        // 独立浏览页时提供完整 file_list 菜单 + settings_about。
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -424,9 +426,16 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
+        if (args.embedded) {
+            // 内嵌首页/浏览页：HomeFragment 顶部 toolbar 即 ActionBar，
+            // 由本 Fragment 直接提供设置/关于入口，避免依赖 HomeFragment 的菜单挂载。
+            inflater.inflate(R.menu.settings_about, menu)
+            return
+        }
         menuBinding = MenuBinding.inflate(menu, inflater)
         menuBinding.viewSortItem.subMenu!!.setGroupDividerEnabledCompat(true)
         setUpSearchView()
+        inflater.inflate(R.menu.settings_about, menu)
     }
 
     private fun setUpSearchView() {
@@ -574,6 +583,14 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             }
             R.id.action_create_shortcut -> {
                 createShortcut()
+                true
+            }
+            R.id.action_settings -> {
+                startActivitySafe(SettingsActivity::class.createIntent())
+                true
+            }
+            R.id.action_about -> {
+                startActivitySafe(AboutActivity::class.createIntent())
                 true
             }
             else -> super.onOptionsItemSelected(item)
