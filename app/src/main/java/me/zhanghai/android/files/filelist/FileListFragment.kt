@@ -1548,6 +1548,10 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         cutFiles(fileItemSetOf(file))
     }
 
+    override fun pasteFiles() {
+        pasteFiles(viewModel.currentPath)
+    }
+
     override fun copyFile(file: FileItem) {
         copyFiles(fileItemSetOf(file))
     }

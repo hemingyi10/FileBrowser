@@ -8,6 +8,9 @@ package me.zhanghai.android.files.ui.category
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -30,6 +33,7 @@ import java.util.concurrent.Future
 import java8.nio.file.Files
 import java8.nio.file.Path
 import me.zhanghai.android.files.R
+import me.zhanghai.android.files.about.AboutActivity
 import me.zhanghai.android.files.databinding.CategoryFileListFragmentBinding
 import me.zhanghai.android.files.file.FileItem
 import me.zhanghai.android.files.file.fileProviderUri
@@ -45,7 +49,9 @@ import me.zhanghai.android.files.filelist.BottomNavHost
 import me.zhanghai.android.files.filelist.name
 import me.zhanghai.android.files.filelist.supportsThumbnail
 import me.zhanghai.android.files.settings.Settings
+import me.zhanghai.android.files.settings.SettingsActivity
 import me.zhanghai.android.files.util.createInstallPackageIntent
+import me.zhanghai.android.files.util.createIntent
 import me.zhanghai.android.files.util.createViewIntent
 import me.zhanghai.android.files.util.valueCompat
 
@@ -183,6 +189,30 @@ class CategoryFileListFragment : Fragment() {
     private val allFiles = mutableListOf<FileItem>()
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
     private var loadJob: Future<*>? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.settings_about, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(SettingsActivity::class.createIntent())
+                true
+            }
+            R.id.action_about -> {
+                startActivity(AboutActivity::class.createIntent())
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

@@ -266,11 +266,9 @@ class FileListAdapter(
                 }
             }
             setOnLongClickListener {
-                if (selectedFiles.isEmpty()) {
-                    selectFile(file)
-                } else {
-                    listener.openFile(file)
-                }
+                // 长按弹出小窗口菜单（属性/剪切/复制/删除/粘贴/分享等），
+                // 不再触发打开或进入多选，避免与底栏多选及"更多"菜单冲突
+                holder.popupMenu.show()
                 true
             }
         }
@@ -352,6 +350,7 @@ class FileListAdapter(
         val isArchivePath = path.isArchivePath
         menu.findItem(R.id.action_copy)
             .setTitle(if (isArchivePath) R.string.file_item_action_extract else R.string.copy)
+        menu.findItem(R.id.action_paste).isVisible = !hasPickOptions && !isReadOnly && !isArchivePath
         menu.findItem(R.id.action_delete).isVisible = !isReadOnly
         menu.findItem(R.id.action_rename).isVisible = !isReadOnly
         menu.findItem(R.id.action_extract).isVisible = file.isArchiveFile
@@ -365,6 +364,10 @@ class FileListAdapter(
                 }
                 R.id.action_cut -> {
                     listener.cutFile(file)
+                    true
+                }
+                R.id.action_paste -> {
+                    listener.pasteFiles()
                     true
                 }
                 R.id.action_copy -> {
@@ -479,6 +482,9 @@ class FileListAdapter(
         fun openFile(file: FileItem)
         fun openFileWith(file: FileItem)
         fun cutFile(file: FileItem)
+
+        fun pasteFiles()
+
         fun copyFile(file: FileItem)
         fun confirmDeleteFile(file: FileItem)
         fun showRenameFileDialog(file: FileItem)

@@ -8,6 +8,9 @@ package me.zhanghai.android.files.ui.cloud
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -19,10 +22,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import me.zhanghai.android.files.R
+import me.zhanghai.android.files.about.AboutActivity
 import me.zhanghai.android.files.databinding.CloudStorageFragmentBinding
 import me.zhanghai.android.files.filelist.BottomNavHost
 import me.zhanghai.android.files.filelist.FileListActivity
 import me.zhanghai.android.files.settings.Settings
+import me.zhanghai.android.files.settings.SettingsActivity
 import me.zhanghai.android.files.storage.AddLanSmbServerActivity
 import me.zhanghai.android.files.storage.AddStorageDialogActivity
 import me.zhanghai.android.files.storage.FileSystemRoot
@@ -43,6 +48,30 @@ class CloudStorageFragment : Fragment() {
 
     private lateinit var binding: CloudStorageFragmentBinding
     private lateinit var adapter: CloudStorageAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.settings_about, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(SettingsActivity::class.createIntent())
+                true
+            }
+            R.id.action_about -> {
+                startActivity(AboutActivity::class.createIntent())
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

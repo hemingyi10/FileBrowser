@@ -33,7 +33,7 @@
             <LinearLayout
                 android:id="@+id/bottomActionBar"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="26dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/file_list_toolbar_padding_start"

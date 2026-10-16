@@ -16,6 +16,10 @@
         android:title="@string/cut" />
 
     <item
+        android:id="@+id/action_paste"
+        android:title="@string/paste" />
+
+    <item
         android:id="@+id/action_copy"
         android:title="@string/copy" />
 

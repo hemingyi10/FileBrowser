@@ -7,6 +7,9 @@ package me.zhanghai.android.files.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -16,12 +19,15 @@ import androidx.fragment.app.commit
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import me.zhanghai.android.files.R
+import me.zhanghai.android.files.about.AboutActivity
 import me.zhanghai.android.files.databinding.HomeFragmentBinding
 import me.zhanghai.android.files.filelist.FileListActivity
 import me.zhanghai.android.files.filelist.FileListFragment
 import me.zhanghai.android.files.settings.Settings
+import me.zhanghai.android.files.settings.SettingsActivity
 import me.zhanghai.android.files.ui.category.Category
 import me.zhanghai.android.files.ui.category.CategoryFileListFragment
+import me.zhanghai.android.files.util.createIntent
 import me.zhanghai.android.files.util.putArgs
 import me.zhanghai.android.files.util.valueCompat
 
@@ -29,6 +35,30 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: HomeFragmentBinding
     private lateinit var adapter: HomeCategoryAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.settings_about, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(SettingsActivity::class.createIntent())
+                true
+            }
+            R.id.action_about -> {
+                startActivity(AboutActivity::class.createIntent())
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
