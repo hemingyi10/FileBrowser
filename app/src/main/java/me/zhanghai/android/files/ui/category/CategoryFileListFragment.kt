@@ -6,6 +6,7 @@
 package me.zhanghai.android.files.ui.category
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -19,8 +20,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.dispose
@@ -48,17 +53,23 @@ import me.zhanghai.android.files.file.isSupportedArchive
 import me.zhanghai.android.files.file.isVideo
 import me.zhanghai.android.files.file.loadFileItem
 import me.zhanghai.android.files.filelist.BottomNavHost
-import me.zhanghai.android.files.filejob.FileJobService
 import me.zhanghai.android.files.filelist.ConfirmDeleteFilesDialogFragment
 import me.zhanghai.android.files.filelist.EditFileActivity
 import me.zhanghai.android.files.filelist.FileItemSet
+import me.zhanghai.android.files.filelist.FileListActivity
+import me.zhanghai.android.files.filelist.FileListViewModel
+import me.zhanghai.android.files.filelist.OpenFileActivity
 import me.zhanghai.android.files.filelist.OpenFileAsDialogActivity
 import me.zhanghai.android.files.filelist.OpenFileAsDialogFragment
+import me.zhanghai.android.files.filelist.RenameFileDialogFragment
 import me.zhanghai.android.files.filelist.fileItemSetOf
 import me.zhanghai.android.files.filelist.name
 import me.zhanghai.android.files.filelist.toUserFriendlyString
 import me.zhanghai.android.files.filelist.supportsThumbnail
+import me.zhanghai.android.files.filejob.FileJobService
 import me.zhanghai.android.files.fileproperties.FilePropertiesDialogFragment
+import me.zhanghai.android.files.navigation.BookmarkDirectories
+import me.zhanghai.android.files.navigation.BookmarkDirectory
 import me.zhanghai.android.files.provider.archive.isArchivePath
 import me.zhanghai.android.files.settings.Settings
 import me.zhanghai.android.files.settings.SettingsActivity
@@ -184,7 +195,8 @@ private fun FileItem.matchesArchiveFilter(index: Int): Boolean {
     }
 }
 
-class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Listener {
+class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Listener,
+    RenameFileDialogFragment.Listener {
 
     companion object {
         private const val EXTRA_CATEGORY = "category"
@@ -206,6 +218,7 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
     private val allFiles = mutableListOf<FileItem>()
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
     private var loadJob: Future<*>? = null
+    private val viewModel by viewModels { { FileListViewModel() } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -478,16 +491,11 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
     private fun showItemMenu(file: FileItem, anchor: View) {
         val popupMenu = PopupMenu(requireContext(), anchor)
         popupMenu.menuInflater.inflate(R.menu.file_item, popupMenu.menu)
-        // 类别页没有目录上下文，隐藏剪切/复制/粘贴/压缩/解压/书签/快捷方式等项
+        // 类别页没有当前目录上下文，隐藏依赖目标目录的粘贴/解压/压缩项，其余功能全部恢复
         val hiddenIds = listOf(
-            R.id.action_cut,
-            R.id.action_copy,
             R.id.action_paste,
-            R.id.action_rename,
             R.id.action_extract,
-            R.id.action_archive,
-            R.id.action_add_bookmark,
-            R.id.action_create_shortcut
+            R.id.action_archive
         )
         for (id in hiddenIds) {
             popupMenu.menu.findItem(id)?.isVisible = false
@@ -508,6 +516,26 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
                 }
                 R.id.action_copy_path -> {
                     copyPath(file.path)
+                    true
+                }
+                R.id.action_copy -> {
+                    copyFile(file)
+                    true
+                }
+                R.id.action_cut -> {
+                    cutFile(file)
+                    true
+                }
+                R.id.action_rename -> {
+                    RenameFileDialogFragment.show(file, this)
+                    true
+                }
+                R.id.action_add_bookmark -> {
+                    addBookmark(file)
+                    true
+                }
+                R.id.action_create_shortcut -> {
+                    createShortcut(file)
                     true
                 }
                 R.id.action_properties -> {
@@ -557,6 +585,57 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
 
     private fun copyPath(path: Path) {
         clipboardManager.copyText(path.toUserFriendlyString(), requireContext())
+    }
+
+    override fun renameFile(file: FileItem, newName: String) {
+        FileJobService.rename(file.path, newName, requireContext())
+        loadFiles()
+    }
+
+    override fun hasFileWithName(name: String): Boolean = allFiles.any { it.name == name }
+
+    private fun copyFile(file: FileItem) {
+        viewModel.addToPasteState(true, fileItemSetOf(file))
+        Toast.makeText(requireContext(), R.string.file_category_copy_success, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun cutFile(file: FileItem) {
+        viewModel.addToPasteState(false, fileItemSetOf(file))
+        Toast.makeText(requireContext(), R.string.file_category_cut_success, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun addBookmark(file: FileItem) {
+        BookmarkDirectories.add(BookmarkDirectory(null, file.path))
+        Toast.makeText(requireContext(), R.string.file_add_bookmark_success, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun createShortcut(file: FileItem) {
+        val context = requireContext()
+        val isDirectory = file.attributes.isDirectory
+        val shortcutInfo = ShortcutInfoCompat.Builder(context, file.path.toString())
+            .setShortLabel(file.name)
+            .setIntent(
+                if (isDirectory) {
+                    FileListActivity.createViewIntent(file.path)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                } else {
+                    OpenFileActivity.createIntent(file.path, file.mimeType)
+                }
+            )
+            .setIcon(
+                IconCompat.createWithResource(
+                    context, if (isDirectory) {
+                        R.mipmap.directory_shortcut_icon
+                    } else {
+                        R.mipmap.file_shortcut_icon
+                    }
+                )
+            )
+            .build()
+        ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            Toast.makeText(context, R.string.shortcut_created, Toast.LENGTH_SHORT).show()
+        }
     }
 }
 

@@ -21,8 +21,8 @@
 
         <!-- BottomBarLayout 为 FrameLayout，直接平铺子视图会全部堆叠在左上角并互相覆盖
              （后绘制的下排导航会盖住上排操作栏）。必须用垂直 LinearLayout 包裹成上下排列。
-             宽度贯穿全屏（match_parent，去除 1:8:1 Space 居中的两侧黑边），
-             整体高度压至原 80%（按钮与导航行高度 48dp -> 38dp）。 -->
+             宽度贯穿全屏（match_parent，去除 1:8:1 Space 居中的两侧黑边）。
+             类别页第二菜单栏（操作行）压至 30dp，低于导航行 38dp，形成层次。 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             <LinearLayout
                 android:id="@+id/bottomActionBar"
                 android:layout_width="match_parent"
-                android:layout_height="38dp"
+                android:layout_height="30dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/file_list_toolbar_padding_start"
@@ -42,7 +42,7 @@
                 <ImageButton
                     android:id="@+id/bottomActionMultiSelect"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="30dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="3dp"
@@ -56,7 +56,7 @@
                 <ImageButton
                     android:id="@+id/bottomActionNewFolder"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="30dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="3dp"
@@ -70,7 +70,7 @@
                 <ImageButton
                     android:id="@+id/bottomActionCut"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="30dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="3dp"
@@ -84,7 +84,7 @@
                 <ImageButton
                     android:id="@+id/bottomActionCopy"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="30dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="3dp"
@@ -98,7 +98,7 @@
                 <ImageButton
                     android:id="@+id/bottomActionRefresh"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="30dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="3dp"
@@ -112,7 +112,7 @@
                 <ImageButton
                     android:id="@+id/bottomActionPaste"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="30dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="3dp"
@@ -126,7 +126,7 @@
                 <ImageButton
                     android:id="@+id/bottomActionDelete"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="30dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="3dp"
@@ -140,7 +140,7 @@
                 <ImageButton
                     android:id="@+id/bottomActionMore"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="30dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="3dp"
