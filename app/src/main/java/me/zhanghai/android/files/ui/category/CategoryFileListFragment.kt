@@ -23,6 +23,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import me.zhanghai.android.files.util.viewModels
@@ -277,11 +279,15 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
         // inset（顶部状态栏 + 底部导航条），导致底栏顶部被状态栏高度撑出大片空白，
         // 视觉上“第二菜单栏”过高。与浏览/云盘页（PersistentBarLayout 只向底栏分发
         // bottom inset）对齐：仅保留底部 inset，丢弃顶部 inset。
-        binding.root.findViewById<View>(R.id.bottomBarLayout)
-            .setOnApplyWindowInsetsListener { view, insets ->
-                view.setPadding(0, 0, 0, insets.systemWindowInsetBottom)
-                insets.consumeSystemWindowInsets()
+        // 空安全兜底：include 不带 id（merge 根不进 ViewBinding），运行时用
+        // findViewById 引用 merge 内 BottomBarLayout；若找不到则跳过，避免闪退。
+        binding.root.findViewById<View>(R.id.bottomBarLayout)?.let { bottomBarLayout ->
+            ViewCompat.setOnApplyWindowInsetsListener(bottomBarLayout) { view, insets ->
+                val bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+                view.setPadding(0, 0, 0, bottom)
+                insets
             }
+        }
         loadFiles()
     }
 

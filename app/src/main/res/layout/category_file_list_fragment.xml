@@ -61,7 +61,5 @@
         android:layout_height="1dp"
         android:background="@color/category_bottom_bar_divider" />
 
-    <include
-        android:id="@+id/bottomBarLayout"
-        layout="@layout/category_file_list_fragment_bottom_bar_include" />
+    <include layout="@layout/category_file_list_fragment_bottom_bar_include" />
 </LinearLayout>
