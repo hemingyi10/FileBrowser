@@ -374,7 +374,6 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
 
     private fun enterMultiSelectMode() {
         adapter.multiSelectMode = true
-        adapter.selectFirstSelectableFile()
         updateMultiSelectUi()
     }
 
