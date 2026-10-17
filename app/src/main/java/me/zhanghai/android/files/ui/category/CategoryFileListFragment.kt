@@ -414,16 +414,6 @@ class CategoryFileListFragment : Fragment(), ConfirmDeleteFilesDialogFragment.Li
         (multiSelectButton as? ImageButton)?.imageTintList = ColorStateList.valueOf(
             if (multiSelect) Color.WHITE else 0xFF2196F3.toInt()
         )
-        val hideIds = listOf(
-            R.id.bottomActionNewFolder,
-            R.id.bottomActionCut,
-            R.id.bottomActionCopy,
-            R.id.bottomActionPaste,
-            R.id.bottomActionMore
-        )
-        for (id in hideIds) {
-            binding.root.findViewById<View>(id).isVisible = !multiSelect
-        }
         val deleteButton = binding.root.findViewById<View>(R.id.bottomActionDelete)
         deleteButton.isVisible = true
         deleteButton.background = if (multiSelect && adapter.selectedPaths.isNotEmpty()) {
